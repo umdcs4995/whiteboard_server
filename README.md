@@ -13,6 +13,7 @@ each tab in the browser will be a different user
 #Troubleshooting
 
 If you guys run into the same problem I did where you get an error such as:
+```
   module.js 344:
     throw err;
     ^
@@ -27,7 +28,7 @@ If you guys run into the same problem I did where you get an error such as:
     at Object.Module._extensions..js (module.js:422:10)
     at Module.load (module.js:357:32)
     at Function.Module._load (module.js:314:12)
-    
+```
     
 and you are very sure that the node modules are installed then give this a try.
 
