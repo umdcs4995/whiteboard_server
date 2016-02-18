@@ -35,6 +35,6 @@ and you are very sure that the node modules are installed then give this a try.
 * rm -rf node_modules
 * npm cache clean
 * npm install
-* npm install <other packages>
+* npm install \<other packages\>
 
 Then try running again. This worked for me and hopefully will work for you
