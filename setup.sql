@@ -1,4 +1,5 @@
-#source this in mysql to create the database
+#source this in mysql to create the database by running command
+#source setup.sql from mysql
 drop database hcc;
 create database hcc;
 use hcc;
@@ -37,3 +38,6 @@ create table if not exists message (
     FOREIGN KEY (user_id) REFERENCES user (id),
     FOREIGN KEY (chat_id) REFERENCES chat (id)
 );
+#test stuff (when we have chats and users actually working remove this code)
+insert into chat values(1, 'test', 1);
+insert into user values(1, 'test@test.com', 'test');
