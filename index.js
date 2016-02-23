@@ -21,7 +21,7 @@ io.on('connection', function(socket){
   console.log('user connected');
   socket.on('chat message', function(msg){
     
-    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", "lele"], function(err, fields) {
+    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", msg], function(err, fields) {
       if (err) throw err;
     });
     
