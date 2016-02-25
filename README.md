@@ -12,7 +12,7 @@ First setup mysql database:
 
 Then run envconf.sh or just use the defaults (below):
 
-    cat defaults.conf | bash envconf.sh
+    cp defaults.env .env
 
 Then install the dependencies and start the server:
 
