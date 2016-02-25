@@ -37,7 +37,7 @@ io.on('connection', function(socket){
 
     io.emit('motionevent', msg);
     console.log('motionevent', msg);
-    }
+    });
  
 });
 
