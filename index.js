@@ -28,6 +28,17 @@ io.on('connection', function(socket){
     io.emit('chat message', msg);
     console.log('message: ' + msg);
   });
+  
+  socket.on('motionevent', function(msg) {
+
+    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", msg], function(err, fields) {
+      if (err) throw err;
+    });
+
+    io.emit('motionevent', msg);
+    console.log('motionevent', msg);
+    }
+ 
 });
 
 http.listen(3000, function(){
