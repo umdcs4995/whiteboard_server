@@ -1,13 +1,13 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+require('dotenv').config();
 
 var mysql  = require('mysql');
-//TODO: set up env file for db info
 var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'pass',
+  host     : process.env.DB_HOST,
+  user     : process.env.DB_USER,
+  password : process.env.DB_PASS,
   database : 'hcc'
 });
 connection.connect();
@@ -41,8 +41,10 @@ io.on('connection', function(socket){
  
 });
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+var port = process.env.PORT || 3000
+
+http.listen(port, function(){
+  console.log('listening on *:' + port);
 });
 
 //connection.end();
