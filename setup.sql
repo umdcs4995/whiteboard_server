@@ -1,6 +1,6 @@
 #source this in mysql to create the database by running command
 #source setup.sql from mysql
-drop database hcc;
+drop database if exists hcc;
 create database hcc;
 use hcc;
 create table if not exists user (
