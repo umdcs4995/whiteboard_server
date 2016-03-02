@@ -4,7 +4,7 @@
   "description": "A sample Node.js app using Express 4",
   "main": "index.js",
   "scripts": {
-    "start": "forever start -l forever.log -o out.log -e error.log index.js",
+    "start": "forever start -al forever.log -o out.log -e error.log index.js",
     "stop":  "forever stop index.js"
   },
   "dependencies": {
