@@ -17,11 +17,14 @@ Then run envconf.sh or just use the defaults (below):
 Then install the dependencies and start the server:
 
     npm install
-    node index.js
+    npm start 
 
 Go to http://localhost:3000/
 
 Each tab in the browser will be a different user.
 
+The server can be stopped with the command
+
+    npm stop
 
 #Troubleshooting
