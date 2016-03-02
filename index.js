@@ -1,6 +1,6 @@
 var app = require('express')();
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var mainListeningSocket = require('socket.io')(http);
 require('dotenv').config();
 
 var mysql  = require('mysql');
@@ -12,30 +12,37 @@ var connection = mysql.createConnection({
 });
 connection.connect();
     
+// add all the handlers to an array....
+
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-io.on('connection', function(socket){
+mainListeningSocket.on('connection', function(clientSocket){
   console.log('user connected');
-  socket.on('chat message', function(msg){
+
+  clientSocket.on('chat message', function(msg){
     
-    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", msg], function(err, fields) {
-      if (err) throw err;
-    });
+//    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", msg], function(err, fields) {
+//      if (err) throw err;
+//    });
+
+//     console.log('Received message from IP' + socket.remoteAddress() + ', id=' + socket.id + ', msg=' + msg);
+    console.log('Received message from IP, id=' + clientSocket.id + ', msg=' + msg);
     
-    io.emit('chat message', msg);
-    console.log('message: ' + msg);
+    mainListeningSocket.emit('chat message', msg);
+
   });
   
-  socket.on('motionevent', function(msg) {
+  clientSocket.on('motionevent', function(msg) {
 
-    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", msg], function(err, fields) {
-      if (err) throw err;
-    });
+// DB queries not yet reliable
+//    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", msg], function(err, fields) {
+//      if (err) throw err;
+//    });
 
-    io.emit('motionevent', msg);
+    mainListeningSocket.emit('motionevent', msg);
     console.log('motionevent', msg);
     });
  
