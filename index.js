@@ -48,7 +48,7 @@ app.get('/', function(req, res){
 // - Stores the clientSocket.id that can be used to emit messages back to those clients.
 //
 var clientList = [];      // array of the client ids
-var whiteboardList = [];  // array of the whiteboards
+var whiteboardMap = {};  // array of the whiteboards
 
 // ======================================================================================
 // Main Listening Socket - for use in making a connection between a client and the server
@@ -83,7 +83,7 @@ mainListeningSocket.on('connection', function(clientSocket){
 		}
 
 		// Verify if the whiteboard can be created 
-		whiteboardList.push( whiteboardData.name );
+		whiteboardMap[whiteboardData.name] = whiteboardData;
 
 		// Alert the client if the whiteboard was created.
 		clientSocket.emit('response', { 'status': 100, 'message': 'Successful creation' });
@@ -121,7 +121,8 @@ mainListeningSocket.on('connection', function(clientSocket){
 
 		// Because this goes out the main socket, all clients will get it...
 		mainListeningSocket.emit('chat message', msg);
-    mainListeningSocket.
+
+
 		// this may be another way to send to all connected sockets:
 		// mainListeningSocket.sockets.emit('messagename', 'message');
 	});
