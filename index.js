@@ -11,17 +11,26 @@
 // 
 // Important information for using the socket.io classes:
 // 
-// TODO------------------------------------------------------------------------------------------------------------------
+// TODO ---
 //  Implement Loading Whiteboard
 //  Emit to specific client/clients
-// 
-// ----------------------------------------------------------------------------------------------------------------------
+//  Browser client for debugging?
+// ---------
 
 // Express is a JS web app system 
-var app = require('express')();
+var app = require('express')(),	
+    path = require('path'),	
+    streams = require('./streams.js')();
+    
 var http = require('http').Server(app);
 var mainListeningSocket = require('socket.io')(http);
 require('dotenv').config();
+
+var favicon = require('serve-favicon'),
+	logger = require('morgan'),
+	methodOverride = require('method-override'),
+    bodyParser = require('body-parser'),
+	errorHandler = require('errorhandler');
 
 //
 // MySQL connection information
@@ -39,9 +48,17 @@ if (useMYSQL) {
 }
 
 // Ideally, add all the handlers to an array
-
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/index.html');
+});
+
+// GET streams as JSON
+app.get('/streams.json', function(req, res) {
+  var streamList = streams.getStreams();
+  // JSON exploit to clone streamList.public
+  var data = (JSON.parse(JSON.stringify(streamList))); 
+
+  res.status(200).json(data);
 });
 
 // Array to hold the list of connected clients
@@ -50,10 +67,7 @@ app.get('/', function(req, res){
 var clientList = [];      // array of the client ids
 var whiteboardList = [];  // array of the whiteboards
 
-// ======================================================================================
-// Main Listening Socket - for use in making a connection between a client and the server
-// ======================================================================================
-
+// socket.io entry point
 mainListeningSocket.on('connection', function(clientSocket){
 
 	// Client has connected.
@@ -62,10 +76,8 @@ mainListeningSocket.on('connection', function(clientSocket){
 	// Add the client socket identifier to the client array
 	clientList.push(clientSocket);
 
-	// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-	// createWhiteboard - Client Protocol Message
-  //
-  //  
+	// createWhiteboard
+    // creates a whiteboard with info from JSON data
 	clientSocket.on('createWhiteboard', function(msg) {
 
 		console.log('createWhiteboard', msg);
@@ -74,8 +86,8 @@ mainListeningSocket.on('connection', function(clientSocket){
 
 		console.log('   name: ', whiteboardData.name);
 
-		// Some of our message parameters may be optional. For
-		// instance,
+		// Some of our message parameters may be optional. 
+        // For instance,
 		if (whiteboardData.access !== undefined) {
 			// the access member was sent in the message so process it
 			// appropriately
@@ -89,10 +101,8 @@ mainListeningSocket.on('connection', function(clientSocket){
 		clientSocket.emit('response', { 'status': 100, 'message': 'Successful creation' });
 	});
 
-	// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// joinWhiteboard - Client Protocol Message
-  //
-  //  
+    // joins whitebaords by id
 	clientSocket.on('joinWhiteboard', function(msg) {
 		console.log('joinWhiteboard', msg);
 
@@ -105,8 +115,6 @@ mainListeningSocket.on('connection', function(clientSocket){
 		clientSocket.emit('response', { 'status': 100, 'message': 'Joined whiteboard' });
 	});
 
-
-	// -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 	// Our test messages....
 	//    chat message
 	//    motion event
@@ -121,14 +129,11 @@ mainListeningSocket.on('connection', function(clientSocket){
 
 		// Because this goes out the main socket, all clients will get it...
 		mainListeningSocket.emit('chat message', msg);
-    mainListeningSocket.
 		// this may be another way to send to all connected sockets:
 		// mainListeningSocket.sockets.emit('messagename', 'message');
 	});
 
-  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  //
-  //
+    // Event triggered by client drawing
 	clientSocket.on('motionevent', function(msg) {
 
 		// DB queries not yet reliable
@@ -139,14 +144,40 @@ mainListeningSocket.on('connection', function(clientSocket){
 		mainListeningSocket.emit('motionevent', msg);
 		console.log('motionevent', msg);
 	});
+    
+    clientSocket.emit('id', clientSocket.id);
 
-  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  //Handles all client disconnects
-  //Removes clients from our own client list
-  //
-  clientSocket.on('disconnect', function(msg){
+    clientSocket.on('message', function (details) {
+      var otherClient = io.sockets.connected[details.to];
 
-  });
+      if (!otherClient) {
+        return;
+      }
+        delete details.to;
+        details.from = clientSocket.id;
+        otherClient.emit('message', details);
+    });
+      
+    clientSocket.on('readyToStream', function(options) {
+      console.log('-- ' + clientSocket.id + ' is ready to stream --');
+      
+      streams.addStream(clientSocket.id, options.name); 
+    });
+    
+    clientSocket.on('update', function(options) {
+      streams.update(clientSocket.id, options.name);
+    });
+
+    //Handles all client disconnects
+    //Removes clients from our own client list
+    function leave() {
+      console.log('Client left: ' + clientSocket.id);
+      streams.removeStream(clientSocket.id);
+    }
+
+    clientSocket.on('disconnect', leave);
+    clientSocket.on('leave', leave);
+
 });
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //
