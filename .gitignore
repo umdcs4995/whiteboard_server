@@ -2,6 +2,6 @@ node_modules
 .env
 Dockerfile
 docker-compose.yml
-forever.log
-out.log
-error.log
+
+log/out.log
+log/error.log
