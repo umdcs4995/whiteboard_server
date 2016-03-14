@@ -17,7 +17,7 @@ require('dotenv').config();
 
 var app = require('express')()
     path = require('path'),	
-    streams = require('./streams.js')(),
+    streams = require('./app/streams.js')(),
     http = require('http').Server(app),
     mainListeningSocket = require('socket.io')(http),
     favicon = require('serve-favicon'),
