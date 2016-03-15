@@ -27,4 +27,19 @@ The server can be stopped with the command
 
     npm stop
 
-#Troubleshooting
+#Debugging
+
+Using npm download: iocat
+
+Iocat can be used to send messages to our nodejs server, which makes testing our methods easier.
+
+You would start your node js server and then in another terminal type: iocat [options] URL
+If you want to test a specific clause such as the on("joinWhiteBoard"...) method you would use the -e option (-e, --emit-key <key>     Emit-key, default is "message")
+
+For example:
+
+	iocat --socketio -e joinWhiteboard 127.0.0.1:3000
+
+To send messages that can be parsed correctly you must send it in a JSON format
+	
+	{"key" : "value"}
