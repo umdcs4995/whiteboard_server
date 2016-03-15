@@ -58,19 +58,13 @@ var whiteboardMap = {};   // map of the whiteboards
 
 // socket.io entry point
 mainListeningSocket.on('connection', function(clientSocket){
-	actions.addClient(clientList,clientSockets);
+	actions.addClient(clientList,clientSocket);
 	clientSocket.emit('connection', clientSocket.id);
 
 	clientSocket.on('createWhiteboard', function(msg) {
 		actions.createWhiteboard(whiteboardMap, clientSocket, msg);
 	});
 
-	clientSocket.on('list', function(msg) {
-		actions.listAllClients(clientList, clientSocket);
-	});
-
-	// joinWhiteboard - Client Protocol Message
-	// joins whiteboards by id
 	clientSocket.on('joinWhiteboard', function(msg) {
 		actions.joinWhiteboard(whiteboardMap, clientSocket, msg)
 	});
@@ -82,27 +76,13 @@ mainListeningSocket.on('connection', function(clientSocket){
 
 	// motionevent - triggered by client drawing
 	clientSocket.on('motionevent', function(msg) {
-
-		// DB queries not yet reliable
-		//    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", msg], function(err, fields) {
-		//      if (err) throw err;
-		//    });
-
-		mainListeningSocket.emit('motionevent', msg);
-		console.log('motionevent', msg);
+		actions.motionEvent(mainListeningSocket, msg);
 	});
 
 	// message - represents a direct message to another client
 	// (currently only used by RTC)
 	clientSocket.on('message', function (details) {
-		var otherClient = io.sockets.connected[details.to];
-
-		if (!otherClient) {
-			return;
-		}
-		delete details.to;
-		details.from = clientSocket.id;
-		otherClient.emit('message', details);
+		actions.message(io.sockets.connected[details.to], clientSocket, details);
 	});
 
 	// readyToStream - adds a client stream to the master stream list
@@ -127,6 +107,10 @@ mainListeningSocket.on('connection', function(clientSocket){
 	});
 	clientSocket.on('leave', function(){
 		actions.leave(streams, clientList, clientSocket);
+	});
+
+	clientSocket.on('list', function(msg) {
+		actions.listAllClients(clientList, clientSocket);
 	});
 });
 

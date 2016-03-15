@@ -1,13 +1,15 @@
+/**
+ * The format of this document should be kept as such:
+ * 			Methods used in order of use in index.js
+ * 			Helper functions
+ * 			Debugger at end of file
+ *
+ * For functions the parameters should follow some sort of structure like this:
+ * 			function(randomStuff, whiteboardMap, clientList, clientSocket, msg (or whatever variable name is caught on the action))
+ */
+
 module.exports = function(){
 	return {
-		listAllClients : function (clientList, clientSocket){
-			var str = "";
-			clientList.forEach(function(c){
-				str += c.id + " ";
-			});
-			clientSocket.emit('list', str);
-		},
-
 		addClient : function(clientList, clientSocket){
 			// Client has connected.
 			console.log('client connected: client id=' + clientSocket.id);
@@ -43,6 +45,8 @@ module.exports = function(){
 				clientSocket.emit('createWhiteboard', { 'status': 100, 'message': 'Successful creation' });
 		},
 
+		// joinWhiteboard - Client Protocol Message
+		// joins whiteboards by id
 		joinWhiteboard : function(whiteboardMap, clientSocket, msg){
 			console.log('joinWhiteboard', msg);
 
@@ -75,6 +79,25 @@ module.exports = function(){
 				// mainListeningSocket.sockets.emit('messagename', 'message');
 		},
 
+		motionEvent : function(mainListeningSocket, msg){
+			// DB queries not yet reliable
+			//    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", msg], function(err, fields) {
+			//      if (err) throw err;
+			//    });
+
+			mainListeningSocket.emit('motionevent', msg);
+			console.log('motionevent', msg);
+		},
+
+		message : function(otherClient,clientSocket, details){
+			if (!otherClient) {
+				return;
+			}
+			delete details.to;
+			details.from = clientSocket.id;
+			otherClient.emit('message', details);
+		},
+
 		//Need to rework this so that it may catch when people close a session in terminal via iocat
 		leave : function(streams, clientList, clientSocket){
 			console.log('Client left: ' + clientSocket.id);
@@ -84,6 +107,15 @@ module.exports = function(){
 				if(index >= 0){
 					clientList.splice(index, 1);
 				}
+		},
+
+
+		listAllClients : function (clientList, clientSocket){
+			var str = "";
+			clientList.forEach(function(c){
+				str += c.id + " ";
+			});
+			clientSocket.emit('list', str);
 		},
 	}
 }
