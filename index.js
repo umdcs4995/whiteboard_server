@@ -65,6 +65,8 @@ mainListeningSocket.on('connection', function(clientSocket){
 	// Add the client socket identifier to the client array
 	clientList.push(clientSocket);
     
+    
+
     // Emit the id back to the client so they know what their id is
     // (currently only used by RTC code)
     clientSocket.emit('id', clientSocket.id);
@@ -100,12 +102,16 @@ mainListeningSocket.on('connection', function(clientSocket){
 		console.log('joinWhiteboard', msg);
 
 		var whiteboardData = JSON.parse(msg);
+		console.log(msg);
 		console.log('   name: ', whiteboardData.name);
 
 		// Determine if this whiteboard exists
-
+		if(whiteboardMap[whiteboardData.name]==null){
+			clientSocket.emit('joinWhiteboard', { 'status': 100, 'message': whiteboardData.name + ' does not exsist'})
+		}else{
 		// Alert the client if the whiteboard was joined.
-		clientSocket.emit('response', { 'status': 100, 'message': 'Joined whiteboard' });
+			clientSocket.emit('message', { 'status': 100, 'message': 'whiteboardData.name'});
+		}
 	});
 
     // chat message - echoes the message to all connected clients
