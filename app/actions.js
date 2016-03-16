@@ -53,13 +53,16 @@ module.exports = function(){
 			var whiteboardData = JSON.parse(msg);
 			console.log(msg);
 			console.log('   name: ', whiteboardData.name);
+			console.log('   username: ', whiteboardData.username);
 
 			// Determine if this whiteboard exists
-			if(whiteboardMap[whiteboardData.name]==null){
-				clientSocket.emit('joinWhiteboard', { 'status': 100, 'message': whiteboardData.name + ' does not exsist'})
-			}else{
-				// Alert the client if the whiteboard was joined.
-				clientSocket.emit('message', { 'status': 100, 'message': 'whiteboardData.name'});
+			if(whiteboardMap[whiteboardData.name]!=null){
+				clientSocket.emit('joinWhiteboard', { 'status': 100, 'message': whiteboardData.name})
+				// query DB to see if user is already in whiteBoard's roster
+				//if not, add user to roster 
+			}
+			else{
+				clientSocket.emit('message', { 'status': 100, 'message': whiteboardData.name + ' does not exist'});
 			}
 		},
 
@@ -80,6 +83,16 @@ module.exports = function(){
 		},
 
 		motionEvent : function(mainListeningSocket, msg){
+			// DB queries not yet reliable
+			//    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", msg], function(err, fields) {
+			//      if (err) throw err;
+			//    });
+
+			mainListeningSocket.emit('motionevent', msg);
+			console.log('motionevent', msg);
+		},
+
+		motionEventBinary : function(mainListeningSocket, msg){ //FUNCTION IS TEMPORARY
 			// DB queries not yet reliable
 			//    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", msg], function(err, fields) {
 			//      if (err) throw err;
