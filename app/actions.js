@@ -58,10 +58,10 @@ module.exports = function(){
 			// Determine if this whiteboard exists
 			if(whiteboardMap[whiteboardData.name]!=null){
 				clientSocket.emit('joinWhiteboard', { 'status': 100, 'message': whiteboardData.name})
-				// query DB to see if user is already in whiteBoard's roster
-				//if not, add user to roster 
-			}
-			else{
+				// Query DB to see if user is already in whiteBoard's roster
+					//if not, add user to roster w/ subsequent information 
+			} else{
+				//Alert client that White board (name) does not exist
 				clientSocket.emit('message', { 'status': 100, 'message': whiteboardData.name + ' does not exist'});
 			}
 		},
@@ -92,12 +92,9 @@ module.exports = function(){
 			console.log('motionevent', msg);
 		},
 
-		motionEventBinary : function(mainListeningSocket, msg){ //FUNCTION IS TEMPORARY
-			// DB queries not yet reliable
-			//    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", msg], function(err, fields) {
-			//      if (err) throw err;
-			//    });
-
+		motionEventBinary : function(mainListeningSocket, msg){ //FUNCTION IS TEMPORARY, please don't touch
+			//DB stuff
+			
 			mainListeningSocket.emit('motionevent', msg);
 			console.log('motionevent', msg);
 		},
