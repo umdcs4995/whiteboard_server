@@ -99,10 +99,8 @@ module.exports = function(){
 		},
 
 		//Need to rework this so that it may catch when people close a session in terminal via iocat
-		leave : function(streams, clientList, clientSocket){
+		leave : function(clientList, clientSocket){
 			console.log('Client left: ' + clientSocket.id);
-				streams.removeStream(clientSocket.id);
-
 				var index = clientList.indexOf(clientSocket);
 				if(index >= 0){
 					clientList.splice(index, 1);

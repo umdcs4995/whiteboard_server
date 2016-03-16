@@ -21,6 +21,7 @@ path = require('path'),
 	 streams = require('./app/streams.js')(),
 	 http = require('http').Server(app),
 	 mainListeningSocket = require('socket.io')(http),
+     rtc_handler = require('socket.io')(),
 	 favicon = require('serve-favicon'),
 	 logger = require('morgan'),
 	 methodOverride = require('method-override'),
@@ -40,7 +41,6 @@ if (useMYSQL) {
 	connection.connect();
 }
 
-// TODO: Ideally, add all HTTP handlers to an array
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/index.html');
 });
@@ -51,6 +51,16 @@ app.get('/streams.json', function(req, res) {
 	var data = (JSON.parse(JSON.stringify(streamList))); 
 	res.status(200).json(data);
 });
+
+// RTC socket.io handler - uses port 3001 if RTC_PORT is not defined in .env
+// TODO: make secure?
+var rtc_serv = require('http').createServer();
+var rtc_io = require('socket.io')(rtc_serv);
+var rtc_port = process.env.RTC_PORT || 3001;
+rtc_serv.listen(rtc_port, function() {
+    console.log('rtc server listening on *:' + rtc_port);
+});
+require('./app/rtc_handler.js')(rtc_io, streams);
 
 // Array to hold the list of connected clients
 var clientList = [];      // array of the client ids
@@ -79,34 +89,14 @@ mainListeningSocket.on('connection', function(clientSocket){
 		actions.motionEvent(mainListeningSocket, msg);
 	});
 
-	// message - represents a direct message to another client
-	// (currently only used by RTC)
-	clientSocket.on('message', function (details) {
-		actions.message(io.sockets.connected[details.to], clientSocket, details);
-	});
-
-	// readyToStream - adds a client stream to the master stream list
-	// (RTC only)
-	clientSocket.on('readyToStream', function(options) {
-		console.log('-- ' + clientSocket.id + ' is ready to stream --');
-
-		streams.addStream(clientSocket.id, options.name); 
-	});
-
-	// update - updates a client stream on the master stream list
-	// (RTC only)
-	clientSocket.on('update', function(options) {
-		streams.update(clientSocket.id, options.name);
-	});
-
-
 	//Handles all client disconnects
-	//Removes clients from our own client list and from the video stream list
+	//Removes clients from the client list
 	clientSocket.on('disconnect', function(){
-		actions.leave(streams, clientList, clientSocket);
+		actions.leave(clientList, clientSocket);
 	});
+    
 	clientSocket.on('leave', function(){
-		actions.leave(streams, clientList, clientSocket);
+		actions.leave(clientList, clientSocket);
 	});
 
 	clientSocket.on('list', function(msg) {
@@ -114,10 +104,9 @@ mainListeningSocket.on('connection', function(clientSocket){
 	});
 });
 
-
 var port = process.env.PORT || 3000
 http.listen(port, function(){
-	console.log('listening on *:' + port);
+	console.log('whiteboard server listening on *:' + port);
 });
 
 // TODO: Here lies dead MySQL code

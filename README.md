@@ -30,7 +30,9 @@ The server can be stopped with the command
 
 #Actions in Index.js
 All logic for the actions in index js such as 
+
 	clientSocket.on(etc...)
+
 will be contained in the file /app/actions.js
 
 In order to add to this file just create your function in the return {} and do not forget to add a comma after the function. 
@@ -40,6 +42,8 @@ To invoke the methods just call actions.methodName
 #Debugging
 
 Using npm download: iocat
+
+    npm install -g iocat
 
 Iocat can be used to send messages to our nodejs server, which makes testing our methods easier.
 

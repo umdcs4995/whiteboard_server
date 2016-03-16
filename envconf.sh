@@ -6,6 +6,9 @@ if [ -e ".env" ]; then source '.env'; fi
 read -p "Port [$PORT]: " N_PORT
 PORT="${N_PORT:=$PORT}"
 
+read -p "RTC signaling port [$RTC_PORT]: " N_RTC_PORT
+PORT="${N_RTC_PORT:=$RTC_PORT}"
+
 read -p "MySQL host [$DB_HOST]: " N_DB_HOST
 DB_HOST="${N_DB_HOST:=$DB_HOST}"
 
