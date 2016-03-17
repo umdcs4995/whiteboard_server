@@ -10,12 +10,13 @@
 
 module.exports = function(){
 	return {
-		addClient : function(clientList, clientSocket){
+		addClient : function(clientMap, clientSocket){
 			// Client has connected.
 			console.log('client connected: client id=' + clientSocket.id);
 
 			// Add the client socket identifier to the client array
-			clientList.push(clientSocket);
+			clientMap[clientSocket.id] = clientSocket;
+
 			// Emit the id back to the client so they know what their id is
 			// (currently only used by RTC code)
 			clientSocket.emit('connection', clientSocket.id);
@@ -69,9 +70,6 @@ module.exports = function(){
 		chatMessage : function(socket, clientSocket, msg){
 
 				// No DB Stuff yet...
-				//    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", msg], function(err, fields) {
-				//      if (err) throw err;
-				//    });
 
 				console.log('Received chat message id=' + clientSocket.id + ', msg=' + msg);
 
@@ -84,16 +82,13 @@ module.exports = function(){
 
 		motionEvent : function(mainListeningSocket, msg){
 			// DB queries not yet reliable
-			//    connection.query('insert into message (user_id, chat_id, message) values(?, ?, ?) ', ["1", "1", msg], function(err, fields) {
-			//      if (err) throw err;
-			//    });
 
 			mainListeningSocket.emit('motionevent', msg);
 			console.log('motionevent', msg);
 		},
 
 		motionEventBinary : function(mainListeningSocket, msg){ //FUNCTION IS TEMPORARY, please don't touch
-			//DB stuff
+			// No DB Stuff yet...
 			
 			mainListeningSocket.emit('motionevent', msg);
 			console.log('motionevent', msg);
@@ -109,20 +104,20 @@ module.exports = function(){
 		},
 
 		//Need to rework this so that it may catch when people close a session in terminal via iocat
-		leave : function(clientList, clientSocket){
+		leave : function(clientMap, clientSocket){
 			console.log('Client left: ' + clientSocket.id);
-				var index = clientList.indexOf(clientSocket);
-				if(index >= 0){
-					clientList.splice(index, 1);
+				//var index = clientList.indexOf(clientSocket);
+				if(clientMap[clientSocket.id]){
+					delete clientMap[clientSocket.id];
 				}
 		},
 
-
-		listAllClients : function (clientList, clientSocket){
+		listAllClients : function (clientMap, clientSocket){
 			var str = "";
-			clientList.forEach(function(c){
-				str += c.id + " ";
-			});
+			//clientList.forEach(function(c){
+			for(key in clientMap){
+				str += clientMap[key] + " ";
+			}
 			clientSocket.emit('list', str);
 		},
 	}

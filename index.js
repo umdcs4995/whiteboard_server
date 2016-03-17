@@ -71,12 +71,14 @@ rtc_serv.listen(rtc_port, function() {
 require('./app/rtc_handler.js')(rtc_io, streams);
 
 // Array to hold the list of connected clients
-var clientList = [];      // array of the client ids
+//var clientList = [];      // array of the client ids
+var clientMap = {};
 var whiteboardMap = {};   // map of the whiteboards
 
 // socket.io entry point
 mainListeningSocket.on('connection', function(clientSocket){
-	actions.addClient(clientList,clientSocket);
+	
+	actions.addClient(clientMap,clientSocket);
 	clientSocket.emit('connection', clientSocket.id);
 
 	clientSocket.on('createWhiteboard', function(msg) {
@@ -100,15 +102,15 @@ mainListeningSocket.on('connection', function(clientSocket){
 	//Handles all client disconnects
 	//Removes clients from the client list
 	clientSocket.on('disconnect', function(){
-		actions.leave(clientList, clientSocket);
+		actions.leave(clientMap,ClientSocket);
 	});
     
 	clientSocket.on('leave', function(){
-		actions.leave(clientList, clientSocket);
+		actions.leave(clientMap,ClientSocket)
 	});
 
 	clientSocket.on('list', function(msg) {
-		actions.listAllClients(clientList, clientSocket);
+		actions.listAllClients(clientMap,clientSocket)
 	});
 });
 
