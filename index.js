@@ -45,6 +45,14 @@ app.get('/', function(req, res){
 	res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/log.txt', function(req, res){
+	res.sendFile(__dirname + '/log/out.log');
+});
+
+app.get('/log.html', function(req, res){
+	res.sendFile(__dirname + '/log.html');
+}); 
+
 app.get('/streams.json', function(req, res) {
 	var streamList = streams.getStreams();
 	// JSON exploit to clone streamList.public
