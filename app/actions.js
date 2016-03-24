@@ -26,23 +26,16 @@ module.exports = function(){
 		// creates a whiteboard with info from JSON data
 		createWhiteboard : function(whiteboardMap, clientSocket, msg){
 				console.log('createWhiteboard', msg);
-
 				var whiteboardData = JSON.parse(msg);
-
 				console.log('   name: ', whiteboardData.name);
 
 				// Some of our message parameters may be optional. 
 				// For instance,
-				if (whiteboardData.access !== undefined) {
-					// the access member was sent in the message so process it
-					// appropriately
-					console.log('   access: ', whiteboardData.access);
-				}
-
 				// Verify if the whiteboard can be created 
-				whiteboardMap[whiteboardData.name] = whiteboardData;
-
+				whiteboardMap[whiteboardData.name] = {whiteboardData.name : whiteboardData.name};
+				whiteboardMap[whiteBoardData.name]["clients"] = [clientSocket];
 				// Alert the client if the whiteboard was created.
+				// 
 				clientSocket.emit('createWhiteboard', { 'status': 100, 'message': 'Successful creation' });
 		},
 

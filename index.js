@@ -74,6 +74,15 @@ require('./app/rtc_handler.js')(rtc_io, streams);
 //var clientList = [];      // array of the client ids
 var clientMap = {};
 var whiteboardMap = {};   // map of the whiteboards
+/*
+	Whiteboard Map :
+		Key : Whiteboard Name
+		Value:
+			Another Map of all values
+			Key Name : Name
+			Key connections : number of connections
+			Key clients : list of clients
+ */
 
 app.get('/whiteboards.json', function(req, res) {
     var wbList =  Object.keys(whiteboardMap);
