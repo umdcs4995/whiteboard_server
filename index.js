@@ -109,8 +109,12 @@ mainListeningSocket.on('connection', function(clientSocket){
 		actions.leave(clientMap,ClientSocket);
 	});
 
-	clientSocket.on('list', function(msg) {
+	clientSocket.on('listAllClients', function(msg) {
 		actions.listAllClients(clientMap,clientSocket);
+	});
+
+	clientSocket.on('listAllWhiteboards', function(msg) {
+		actions.listAllWhiteBoards(WhiteBoardMap,clientSocket);
 	});
 });
 
