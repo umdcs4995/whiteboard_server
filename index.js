@@ -124,11 +124,11 @@ mainListeningSocket.on('connection', function(clientSocket){
 		actions.leave(clientMap,clientSocket)
 	});
 
-	clientSocket.on('listAllClients', function(msg) {
+	clientSocket.on('listAllClients', function() {
 		actions.listAllClients(clientMap,clientSocket);
 	});
 
-	clientSocket.on('listAllWhiteboards', function(msg) {
+	clientSocket.on('listAllWhiteboards', function() {
 		actions.listAllWhiteBoards(WhiteBoardMap,clientSocket);
 	});
 });
