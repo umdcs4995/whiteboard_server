@@ -50,14 +50,22 @@ module.exports = function(){
 			console.log('   username: ', whiteboardData.username);
 
 			// Determine if this whiteboard exists
-			if(whiteboardMap[whiteboardData.name]!=null){
-				clientSocket.emit('joinWhiteboard', { 'status': 100, 'message': whiteboardData.name})
-				
-				// Query DB to see if user is already in whiteBoard's roster
-					//if not, add user to roster w/ subsequent information 
-			} else{
-				//Alert client that White board (name) does not exist
-				clientSocket.emit('message', { 'status': 100, 'message': whiteboardData.name + ' does not exist'});
+			try {
+				if(whiteboardMap[whiteboardData.name]!=null && ){
+					//whiteBoardMap[whiteBoardData.name].clients.indexOf(clientSocket.id) !=null){
+				   		//commented out to figure out the best way to handle the event of a user already in a whitebaord.
+
+					// Add client to a WhiteBoard's Roster
+					whiteBoardMap[whiteboardData.name].clients.push(clientSocket.id);
+					
+					//emit to client a confirmation of status:100
+					clientSocket.emit('joinWhiteboard', { 'status': 100, 'message': whiteboardData.name});
+				} else{
+					//Alert client that White board (name) does not exist
+					clientSocket.emit('joinWhiteboard', { 'status': 100, 'message': whiteboardData.name + ' does not exist'});
+				}
+			} catch(err){
+				clientSocket.emit('joinWhiteBoard', { 'status': 100, 'message': 'Error in joinWhiteboard. Did not join you to whiteboard.'});
 			}
 		},
 
