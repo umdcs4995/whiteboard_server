@@ -59,6 +59,7 @@ module.exports = function(){
 			// Determine if this whiteboard exists
 			if(whiteboardMap[whiteboardData.name]!=null){
 				clientSocket.emit('joinWhiteboard', { 'status': 100, 'message': whiteboardData.name})
+				
 				// Query DB to see if user is already in whiteBoard's roster
 					//if not, add user to roster w/ subsequent information 
 			} else{
@@ -116,9 +117,17 @@ module.exports = function(){
 			var str = "";
 			//clientList.forEach(function(c){
 			for(key in clientMap){
-				str += clientMap[key] + " ";
+				str += clientMap[key] + " , ";
 			}
-			clientSocket.emit('list', str);
+			clientSocket.emit('listAllClients', str);
+		},
+
+		listAllWhiteBoards: function (whiteboardMap, clientSocket){
+			var str = "";
+			for(key in whiteBoardMap){
+				str += whiteboardMap[key].name + " , ";
+			}
+			clientSocket.emit('listAllWhiteBoards', str);
 		},
 	}
 }

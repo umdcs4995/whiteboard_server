@@ -92,7 +92,7 @@ mainListeningSocket.on('connection', function(clientSocket){
 	});
 
 	clientSocket.on('joinWhiteboard', function(msg) {
-		actions.joinWhiteboard(whiteboardMap, clientSocket, msg)
+		actions.joinWhiteboard(whiteboardMap, clientSocket, msg);
 	});
 
 	// chat message - echoes the message to all connected clients
@@ -115,8 +115,12 @@ mainListeningSocket.on('connection', function(clientSocket){
 		actions.leave(clientMap,clientSocket)
 	});
 
-	clientSocket.on('list', function(msg) {
-		actions.listAllClients(clientMap,clientSocket)
+	clientSocket.on('listAllClients', function(msg) {
+		actions.listAllClients(clientMap,clientSocket);
+	});
+
+	clientSocket.on('listAllWhiteboards', function(msg) {
+		actions.listAllWhiteBoards(WhiteBoardMap,clientSocket);
 	});
 });
 
