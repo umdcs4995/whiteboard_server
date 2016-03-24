@@ -75,6 +75,12 @@ require('./app/rtc_handler.js')(rtc_io, streams);
 var clientMap = {};
 var whiteboardMap = {};   // map of the whiteboards
 
+app.get('/whiteboards.json', function(req, res) {
+    var wbList =  Object.keys(whiteboardMap);
+	var data = (JSON.parse(JSON.stringify(wbList))); 
+	res.status(200).json(data);
+});
+
 // socket.io entry point
 mainListeningSocket.on('connection', function(clientSocket){
 	
@@ -102,11 +108,11 @@ mainListeningSocket.on('connection', function(clientSocket){
 	//Handles all client disconnects
 	//Removes clients from the client list
 	clientSocket.on('disconnect', function(){
-		actions.leave(clientMap,ClientSocket);
+		actions.leave(clientMap,clientSocket);
 	});
     
 	clientSocket.on('leave', function(){
-		actions.leave(clientMap,ClientSocket)
+		actions.leave(clientMap,clientSocket)
 	});
 
 	clientSocket.on('list', function(msg) {
