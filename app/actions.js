@@ -27,16 +27,16 @@ module.exports = function(){
 		createWhiteboard : function(whiteboardMap, clientSocket, msg){
 				console.log('createWhiteboard', msg);
 				var whiteboardData = JSON.parse(msg);
-				console.log('   name: ', whiteboardData.name);
-
-				// Some of our message parameters may be optional. 
-				// For instance,
-				// Verify if the whiteboard can be created 
-				whiteboardMap[whiteboardData.name] = {whiteboardData.name : whiteboardData.name};
-				whiteboardMap[whiteBoardData.name]["clients"] = [clientSocket];
-				// Alert the client if the whiteboard was created.
-				// 
-				clientSocket.emit('createWhiteboard', { 'status': 100, 'message': 'Successful creation' });
+				console.log('new whiteboard with name:', whiteboardData.name);
+				if(whiteboardMap[whiteboardData.name] == null){
+					whiteboardMap[whiteboardData.name] = {};
+					whiteboardMap[whiteboardData.name].name = whiteboardData.name;
+					whiteboardMap[whiteboardData.name].clients = [clientSocket];
+					clientSocket.emit('createWhiteboard', { 'status': 100, 'message': 'Successful creation' });
+				}
+				else{
+					clientSocket.emit('createWhiteboard', { 'status': 404, 'message': 'Name exists' });
+				}
 		},
 
 		// joinWhiteboard - Client Protocol Message

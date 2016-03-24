@@ -85,7 +85,7 @@ var whiteboardMap = {};   // map of the whiteboards
  */
 
 app.get('/whiteboards.json', function(req, res) {
-    var wbList =  Object.keys(whiteboardMap);
+  var wbList =  Object.keys(whiteboardMap);
 	var data = (JSON.parse(JSON.stringify(wbList))); 
 	res.status(200).json(data);
 });
