@@ -32,8 +32,8 @@ module.exports = function(){
 				// Some of our message parameters may be optional. 
 				// For instance,
 				// Verify if the whiteboard can be created 
-				whiteboardMap[whiteboardData.name] = {whiteboardData.name : whiteboardData.name};
-				whiteboardMap[whiteBoardData.name]["clients"] = [clientSocket];
+				whiteboardMap[whiteboardData.name][whiteboardData.name] = whiteboardData.name;
+				whiteboardMap[whiteboardData.name]["clients"] = [clientSocket];
 				// Alert the client if the whiteboard was created.
 				// 
 				clientSocket.emit('createWhiteboard', { 'status': 100, 'message': 'Successful creation' });
