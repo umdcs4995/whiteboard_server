@@ -108,6 +108,12 @@ mainListeningSocket.on('connection', function(clientSocket){
 	clientSocket.on('chat message', function(msg){
 		actions.chatMessage(mainListeningSocket, clientSocket, msg);
 	});
+    
+    // TODO: This is temporary!
+	// draw event - echoes the message to all connected clients
+	clientSocket.on('drawevent', function(msg){
+		actions.chatMessage(mainListeningSocket, clientSocket, clientMap, whiteboardMap, msg);
+	});
 
 	// motionevent - triggered by client drawing
 	clientSocket.on('motionevent', function(msg) {
