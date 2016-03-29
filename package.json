@@ -5,23 +5,24 @@
   "main": "index.js",
   "scripts": {
     "start": "forever start -al forever.log -o log/out.log -e log/error.log index.js",
-    "stop":  "forever stop index.js"
+    "stop": "forever stop index.js"
   },
   "dependencies": {
-    "ejs": "2.3.3",
-    "express": "4.13.3",
-    "socket.io": "^1.4.5",
-    "mysql": "*",
-    "dotenv": "*",
-    "forever": "*",
+    "async": "^2.0.0-rc.2",
     "body-parser": "^1.12.2",
+    "dotenv": "*",
+    "ejs": "2.3.3",
     "errorhandler": "^1.3.5",
+    "express": "4.13.3",
     "express-session": "^1.11.1",
+    "forever": "*",
     "jade": "^1.9.2",
     "method-override": "^2.3.2",
     "morgan": "^1.5.2",
     "multer": "^0.1.8",
-    "serve-favicon": "^2.2.0"
+    "mysql": "*",
+    "serve-favicon": "^2.2.0",
+    "socket.io": "^1.4.5"
   },
   "engines": {
     "node": "5.7.1"

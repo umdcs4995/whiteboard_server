@@ -95,7 +95,8 @@ mainListeningSocket.on('connection', function(clientSocket){
 	
 	actions.addClient(clientMap,clientSocket);
 	clientSocket.emit('connection', clientSocket.id);
-
+	console.log("clients connected " + clientMap[clientSocket.id].socket.id)
+	clientMap[clientSocket.id].socket.emit("connection", "you are connected")
 	clientSocket.on('createWhiteboard', function(msg) {
 		actions.createWhiteboard(whiteboardMap, clientMap, clientSocket, msg);
 	});
@@ -112,7 +113,7 @@ mainListeningSocket.on('connection', function(clientSocket){
     // TODO: This is temporary!
 	// draw event - echoes the message to all connected clients
 	clientSocket.on('drawevent', function(msg){
-		actions.chatMessage(mainListeningSocket, clientSocket, clientMap, whiteboardMap, msg);
+		actions.drawEvent(mainListeningSocket, clientSocket, clientMap, whiteboardMap, msg);
 	});
 
 	// motionevent - triggered by client drawing
