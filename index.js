@@ -97,7 +97,7 @@ mainListeningSocket.on('connection', function(clientSocket){
 	clientSocket.emit('connection', clientSocket.id);
 
 	clientSocket.on('createWhiteboard', function(msg) {
-		actions.createWhiteboard(whiteboardMap, clientSocket, msg);
+		actions.createWhiteboard(whiteboardMap, clientMap, clientSocket, msg);
 	});
 
 	clientSocket.on('joinWhiteboard', function(msg) {

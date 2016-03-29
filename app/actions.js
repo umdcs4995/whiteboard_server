@@ -25,7 +25,7 @@ module.exports = function(){
 
 		// createWhiteboard
 		// creates a whiteboard with info from JSON data
-		createWhiteboard : function(whiteboardMap, clientSocket, msg){
+		createWhiteboard : function(whiteboardMap, clientMap, clientSocket, msg){
 				console.log('createWhiteboard', msg);
 				var whiteboardData = JSON.parse(msg);
 				console.log('new whiteboard with name:', whiteboardData.name);
