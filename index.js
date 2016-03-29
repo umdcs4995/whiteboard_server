@@ -101,7 +101,7 @@ mainListeningSocket.on('connection', function(clientSocket){
 	});
 
 	clientSocket.on('joinWhiteboard', function(msg) {
-		actions.joinWhiteboard(whiteboardMap, clientSocket, msg);
+		actions.joinWhiteboard(whiteboardMap, clientMap, clientSocket, msg);
 	});
 
 	// chat message - echoes the message to all connected clients

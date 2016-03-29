@@ -47,7 +47,7 @@ module.exports = function(){
 
         // joinWhiteboard - Client Protocol Message
         // joins whiteboards by id
-        joinWhiteboard : function(whiteboardMap, clientSocket, msg){
+        joinWhiteboard : function(whiteboardMap, clientMap, clientSocket, msg){
             console.log('joinWhiteboard', msg);
 
             var whiteboardData = JSON.parse(msg);
