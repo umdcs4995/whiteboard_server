@@ -23,12 +23,21 @@ module.exports = function(){
             clientSocket.emit('connection', clientSocket.id);
         },
 
-        // createWhiteboard
-        // creates a whiteboard with info from JSON data
+        /**
+         * Creates a whiteboard whose name is passed in via the message
+         * @param  {hashmap} whiteboardMap contains all whiteboard data for the Whiteboard Application
+         * @param  {hashmap} clientMap     contains all clients in the Whiteboard Application
+         * @param  {scoketIO} clientSocket  socket that you connect with
+         * @param  {JSON object} msg        message that you send from Java application
+         * @return 
+         */
         createWhiteboard : function(whiteboardMap, clientMap, clientSocket, msg){
             console.log('createWhiteboard', msg);
             var whiteboardData = JSON.parse(msg);
             console.log('new whiteboard with name:', whiteboardData.name);
+            // 	Checks if the whiteboard name exists in the map
+            // 	Creates it if it doesn't
+            // 	Otherwise it emits an error
             if(whiteboardMap[whiteboardData.name] == null){
                 whiteboardMap[whiteboardData.name] = {};
                 whiteboardMap[whiteboardData.name].name = whiteboardData.name;
@@ -38,6 +47,7 @@ module.exports = function(){
                 // Also set the client's active whiteboard
                 clientMap[clientSocket.id].whiteboard = whiteboardData.name;
                 
+                //Emit message if successful
                 clientSocket.emit('createWhiteboard', { 'status': 100, 'message': 'Successful creation' });
             }
             else{
@@ -45,11 +55,16 @@ module.exports = function(){
             }
         },
 
-        // joinWhiteboard - Client Protocol Message
-        // joins whiteboards by id
+        /**
+         * Join Whiteboard connects you to an already existing whiteboard
+         * @param  {hashmap} whiteboardMap contains all whiteboard data for the Whiteboard Application
+         * @param  {hashmap} clientMap     contains all clients in the Whiteboard Application
+         * @param  {scoketIO} clientSocket  socket that you connect with
+         * @param  {JSON object} msg        message that you send from Java application
+         */
         joinWhiteboard : function(whiteboardMap, clientMap, clientSocket, msg){
             console.log('joinWhiteboard', msg);
-
+            //Parse message 
             var whiteboardData = JSON.parse(msg);
             console.log(clientSocket.id + " wants to join whiteboard " + whiteboardData.name);
 
@@ -85,16 +100,23 @@ module.exports = function(){
             socket.emit('chat message', msg);
         },
         
-        // TODO: this is temporary to get things to work
+        /**
+         * DrawEvent will take in all draw events from the client and emit them back to all clients connected to the same whiteboard
+         * @param  {Master Socket} socket   master socket for emition back to everyone connected to the whiteboard application regardless of whiteboard name
+         * @param  {hashmap} whiteboardMap contains all whiteboard data for the Whiteboard Application
+         * @param  {hashmap} clientMap     contains all clients in the Whiteboard Application
+         * @param  {scoketIO} clientSocket  socket that you connect with
+         * @param  {JSON object} msg        message that you send from Java application
+         */
         drawEvent : function(socket, clientSocket, clientMap, whiteboardMap, msg){
             
-            // NOT logging these for obvious reasons
-            // only rebroadcast to all the clients in the emitter's active whiteboard
+            // No logging because this would make the log insanely cluttered
             wb = clientMap[clientSocket.id].whiteboard;
             // console.log(clientMap)s
-            console.log(whiteboardMap)
+            // console.log(whiteboardMap)
             if(wb) {
                 //Always use for each when dealing with these nested arrays/maps
+                //Iterates through each client conected to the whiteboard that you are connected too
                 whiteboardMap[wb].clients.forEach (function(id) {
                     console.log("client object " + id)
                     clientMap[id].socket.emit("drawevent", msg);
@@ -125,15 +147,20 @@ module.exports = function(){
             otherClient.emit('message', details);
         },
 
-        //Need to rework this so that it may catch when people close a session in terminal via iocat
+        /**
+         * Leave is important so that client sessions do not persist on exiting the applicaiton
+         * @param  {Map} clientMap    map of clients
+         * @param  {Socket IO} clientSocket your socket instance
+         */
         leave : function(clientMap, clientSocket){
             console.log('Client left: ' + clientSocket.id);
-            //var index = clientList.indexOf(clientSocket);
+            // checks if id is in the client map. If so it removes you from the client map.
             if(clientMap[clientSocket.id]){
                 delete clientMap[clientSocket.id];
             }
         },
 
+        //Debug method DO NOT TOUCH
         listAllClients : function (clientMap, clientSocket){
             var str = "";
             //clientList.forEach(function(c){
@@ -143,12 +170,12 @@ module.exports = function(){
 			      clientSocket.emit('listAllClients', str);
 		    },
 
-		    listAllWhiteBoards: function (whiteboardMap, clientSocket){
-			      var str = "";
-			      for(key in whiteBoardMap){
-				        str += whiteboardMap[key].name + " , ";
-			      }
-			      clientSocket.emit('listAllWhiteBoards', str);
-		    },
+	    listAllWhiteBoards: function (whiteboardMap, clientSocket){
+		      var str = "";
+		      for(key in whiteBoardMap){
+			        str += whiteboardMap[key].name + " , ";
+		      }
+		      clientSocket.emit('listAllWhiteBoards', str);
+	    	}	,
 	  }
 }

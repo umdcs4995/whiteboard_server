@@ -72,17 +72,25 @@ require('./app/rtc_handler.js')(rtc_io, streams);
 
 // Array to hold the list of connected clients
 //var clientList = [];      // array of the client ids
+/*
+	Client Map:
+		Key: clientSocket.id
+		Velue: Another nested map
+			Socket
+			Whiteboard
+ */
 var clientMap = {};
-var whiteboardMap = {};   // map of the whiteboards
 /*
 	Whiteboard Map :
 		Key : Whiteboard Name
 		Value:
 			Another Map of all values
-			Key Name : Name
-			Key connections : number of connections
-			Key clients : list of clients
+				Key Name : Name
+				Key connections : number of connections
+				Key clients : list of clients
  */
+var whiteboardMap = {};   // map of the whiteboards
+
 
 app.get('/whiteboards.json', function(req, res) {
   var wbList =  Object.keys(whiteboardMap);
