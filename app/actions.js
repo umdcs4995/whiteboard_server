@@ -36,7 +36,7 @@ module.exports = function(){
             var whiteboardData = JSON.parse(msg);
             console.log('new whiteboard with name:', whiteboardData.name);
             // 	Checks if the whiteboard name exists in the map
-            // 	Creates it if it doesn't
+            // 	Creates it if it doesn't, and adds the user to it
             // 	Otherwise it emits an error
             if(whiteboardMap[whiteboardData.name] == null){
                 whiteboardMap[whiteboardData.name] = {};
@@ -44,6 +44,11 @@ module.exports = function(){
                 
                 // Add client to the whiteboard's roster
                 whiteboardMap[whiteboardData.name].clients = [clientSocket.id];
+                // Remove the client from their currently active whiteboard, if they have one
+                var clientPosition = whiteboardMap[clientMap[clientSocket.id].whiteboard].clients.indexOf(clientSocket.id)
+                if(clientPosition != -1) {
+                    whiteboardMap[clientMap[clientSocket.id].whiteboard].clients.splice(clientPosition,1);
+                }
                 // Also set the client's active whiteboard
                 clientMap[clientSocket.id].whiteboard = whiteboardData.name;
                 
@@ -77,6 +82,11 @@ module.exports = function(){
 
                     // Add client to a Whiteboard's Roster
                     whiteboardMap[whiteboardData.name].clients.push(clientSocket.id);
+                    // Remove the client from their currently active whiteboard, if they have one
+                    var clientPosition = whiteboardMap[clientMap[clientSocket.id].whiteboard].clients.indexOf(clientSocket.id)
+                    if(clientPosition != -1) {
+                        whiteboardMap[clientMap[clientSocket.id].whiteboard].clients.splice(clientPosition,1);
+                    }   
                     // Set client's active whiteboard to this one
                     clientMap[clientSocket.id].whiteboard = whiteboardData.name;
                     

@@ -70,8 +70,7 @@ rtc_serv.listen(rtc_port, function() {
 });
 require('./app/rtc_handler.js')(rtc_io, streams);
 
-// Array to hold the list of connected clients
-//var clientList = [];      // array of the client ids
+
 /*
 	Client Map:
 		Key: clientSocket.id
@@ -80,6 +79,7 @@ require('./app/rtc_handler.js')(rtc_io, streams);
 			Whiteboard
  */
 var clientMap = {};
+
 /*
 	Whiteboard Map :
 		Key : Whiteboard Name
@@ -152,6 +152,3 @@ var port = process.env.PORT || 3000
 http.listen(port, function(){
 	console.log('whiteboard server listening on *:' + port);
 });
-
-// TODO: Here lies dead MySQL code
-//connection.end();
