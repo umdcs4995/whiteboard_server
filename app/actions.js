@@ -124,20 +124,25 @@ module.exports = function(){
             }
         },
 
-        motionEvent : function(mainListeningSocket, msg){
-            // DB queries not yet reliable
-
-            mainListeningSocket.emit('motionevent', msg);
+        /**
+         * MotionEvent is a function that simplies takes in motionEvents and emits them to
+         * all clients connected to server. Deprecated. Use drawEvent.
+         *
+         * @param  {Master Socket} socket   master socket for emition back to everyone connected to the whiteboard application regardless of whiteboard name
+         * @param  {JSON object} msg        message that you send from Java application
+         */
+        motionEvent : function(socket, msg){
+            socket.emit('motionevent', msg);
             console.log('motionevent', msg);
         },
 
-        motionEventBinary : function(mainListeningSocket, msg){ //FUNCTION IS TEMPORARY, please don't touch
-            // No DB Stuff yet...
-            
-            mainListeningSocket.emit('motionevent', msg);
-            console.log('motionevent', msg);
-        },
-
+        /**
+         * Message is the key for direct messaging. Not available at the moment. 
+         *
+         * @param  {socketIO} otherClient     Socket of reciever
+         * @param  {scoketIO} clientSocket    Socket of sneder.
+         * @param  {JSON object} details      Object containg data to send.
+         */
         message : function(otherClient,clientSocket, details){
             if (!otherClient) {
                 return;
