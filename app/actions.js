@@ -45,10 +45,13 @@ module.exports = function(){
                 // Add client to the whiteboard's roster
                 whiteboardMap[whiteboardData.name].clients = [clientSocket.id];
                 // Remove the client from their currently active whiteboard, if they have one
-                var clientPosition = whiteboardMap[clientMap[clientSocket.id].whiteboard].clients.indexOf(clientSocket.id)
-                if(clientPosition != -1) {
-                    whiteboardMap[clientMap[clientSocket.id].whiteboard].clients.splice(clientPosition,1);
-                }
+               	if(clientMap[clientSocket.id].whiteboard && clientMap[clientSocket.id].whiteboard in whiteboardMap){
+	                var clientPosition = whiteboardMap[clientMap[clientSocket.id].whiteboard].clients.indexOf(clientSocket.id)
+	                if(clientPosition != -1) {
+	                    whiteboardMap[clientMap[clientSocket.id].whiteboard].clients.splice(clientPosition,1);
+	                }
+           	}
+                
                 // Also set the client's active whiteboard
                 clientMap[clientSocket.id].whiteboard = whiteboardData.name;
                 
@@ -83,10 +86,12 @@ module.exports = function(){
                     // Add client to a Whiteboard's Roster
                     whiteboardMap[whiteboardData.name].clients.push(clientSocket.id);
                     // Remove the client from their currently active whiteboard, if they have one
-                    var clientPosition = whiteboardMap[clientMap[clientSocket.id].whiteboard].clients.indexOf(clientSocket.id)
-                    if(clientPosition != -1) {
-                        whiteboardMap[clientMap[clientSocket.id].whiteboard].clients.splice(clientPosition,1);
-                    }   
+                    	if(clientMap[clientSocket.id].whiteboard && clientMap[clientSocket.id].whiteboard in whiteboardMap){
+	                var clientPosition = whiteboardMap[clientMap[clientSocket.id].whiteboard].clients.indexOf(clientSocket.id)
+	                if(clientPosition != -1) {
+	                    whiteboardMap[clientMap[clientSocket.id].whiteboard].clients.splice(clientPosition,1);
+	                }
+           	}
                     // Set client's active whiteboard to this one
                     clientMap[clientSocket.id].whiteboard = whiteboardData.name;
                     
