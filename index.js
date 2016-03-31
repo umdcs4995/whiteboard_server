@@ -132,11 +132,11 @@ mainListeningSocket.on('connection', function(clientSocket){
 	//Handles all client disconnects
 	//Removes clients from the client list
 	clientSocket.on('disconnect', function(){
-		actions.leave(clientMap,clientSocket);
+		actions.leave(clientMap,clientSocket, whiteboardMap);
 	});
     
 	clientSocket.on('leave', function(){
-		actions.leave(clientMap,clientSocket)
+		actions.leave(clientMap,clientSocket, whiteboardMap)
 	});
 
 	clientSocket.on('listAllClients', function() {
