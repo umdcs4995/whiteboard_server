@@ -128,8 +128,10 @@ module.exports = function(){
                 //Always use for each when dealing with these nested arrays/maps
                 //Iterates through each client conected to the whiteboard that you are connected too
                 whiteboardMap[wb].clients.forEach (function(id) {
-                    console.log("client object " + id)
-                    clientMap[id].socket.emit("drawevent", msg);
+                    	console.log("client object " + id)
+                    	if(id != clientScoket.id){
+	      	           clientMap[id].socket.emit("drawevent", msg);
+     		}
                 });
             }
         },
