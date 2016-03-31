@@ -129,7 +129,7 @@ module.exports = function(){
                 //Iterates through each client conected to the whiteboard that you are connected too
                 whiteboardMap[wb].clients.forEach (function(id) {
                     	console.log("client object " + id)
-                    	if(id != clientScoket.id){
+                    	if(id != clientSocket.id){
 	      	           clientMap[id].socket.emit("drawevent", msg);
      		}
                 });
