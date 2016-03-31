@@ -22,6 +22,9 @@ module.exports = function(v, r) {
     logger.dump = function(msg) {
         if(verbose) {
             console.log(msg);
+            sockets.forEach(function(s) {
+                s.emit('logmessage', msg);
+            });
         }
     }
     
