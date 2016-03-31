@@ -18,7 +18,6 @@
     "forever": "*",
     "jade": "^1.9.2",
     "method-override": "^2.3.2",
-    "morgan": "^1.5.2",
     "multer": "^0.1.8",
     "mysql": "*",
     "serve-favicon": "^2.2.0",
