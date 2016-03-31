@@ -20,9 +20,10 @@ var app = require('express')(),
     errorHandler = require('errorhandler');
 
 var streams = require('./app/streams.js')(),
-     whiteboards = require('./app/whiteboards.js'),
-     clients = require('./app/clients.js'),
-     logger = require('./app/logger.js')(mainListeningSocket);
+    whiteboards = require('./app/whiteboards.js'),
+    clients = require('./app/clients.js'),
+    // change the 'false' to 'true' to get debug output
+    logger = require('./app/logger.js')(false, true);
 
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/index.html');
@@ -46,6 +47,13 @@ app.get('/streams.json', function(req, res) {
 
 app.get('/whiteboards.json', function(req, res) {
     var wbList =  whiteboards.list();
+    var data = (JSON.parse(JSON.stringify(wbList))); 
+	res.status(200).json(data);
+});
+
+// TODO: remove - this is for debugging only
+app.get('/clients.json', function(req, res) {
+    var wbList = clients.list();
     var data = (JSON.parse(JSON.stringify(wbList))); 
 	res.status(200).json(data);
 });
