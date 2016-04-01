@@ -13,11 +13,7 @@ var app = require('express')(),
     path = require('path'),	
     http = require('http').Server(app),
     mainListeningSocket = require('socket.io')(http),
-    rtc_handler = require('socket.io')(),
-    favicon = require('serve-favicon'),
-    methodOverride = require('method-override'),
-    bodyParser = require('body-parser'),
-    errorHandler = require('errorhandler');
+    rtc_handler = require('socket.io')();
 
 var streams = require('./app/streams.js')(),
     whiteboards = require('./app/whiteboards.js'),
@@ -26,16 +22,16 @@ var streams = require('./app/streams.js')(),
     logger = require('./app/logger.js')(false, true);
 
 app.get('/', function(req, res){
-	res.sendFile(__dirname + '/index.html');
+	res.sendFile(__dirname + '/views/index.html');
 });
 
-// TODO: see logger.js
+// For debugging -- allows you to get the whole server log
 app.get('/log.txt', function(req, res){
 	res.sendFile(__dirname + '/log/out.log');
 });
 
 app.get('/log.html', function(req, res){
-	res.sendFile(__dirname + '/log.html');
+	res.sendFile(__dirname + '/views/log.html');
 }); 
 
 app.get('/streams.json', function(req, res) {
@@ -73,4 +69,4 @@ var port = process.env.PORT || 3000
 http.listen(port, function(){
 	logger.log('whiteboard server listening on *:' + port);
 });
-require('./app/client_handler.js')(mainListeningSocket, whiteboards, clients, logger);
+require('./app/client_handler.js')(mainListeningSocket, logger);

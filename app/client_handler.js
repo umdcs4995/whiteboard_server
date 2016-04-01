@@ -1,4 +1,7 @@
-module.exports = function(io, whiteboards, clients, logger) {
+var whiteboards = require('./whiteboards.js'),
+    clients = require('./clients.js');
+
+module.exports = function(io, logger) {
     io.on('connection', function(clientSocket) {
         
         clients.add(clientSocket);

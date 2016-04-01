@@ -38,7 +38,7 @@ module.exports = function(v, r) {
             sockets.splice(pos, 1);
     }
     
-    logger.log("logger started. verbose: " + verbose + " remote_debug: " + remote_debug);
+    logger.log("logger started. verbose: " + verbose + ", remote_debug: " + remote_debug);
     
     return logger;
 }
