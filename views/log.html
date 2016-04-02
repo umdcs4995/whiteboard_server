@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Whiteboard Logger</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      ul { list-style-type: none; margin: 0; padding: 0; }
+      ul li { padding: 5px 10px; }
+      ul li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  <body>
+    <div style="width: 25%; float: left;">
+        <h3>Clients</h3>
+        <ul id="clients"></ul>
+        <br/>
+        <h3>Whiteboards</h3>
+        <ul id="whiteboards"></ul>
+    </div>
+    <ul style="width: 75%; float: left;" id="messages"></ul>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var socket = io();
+      refreshLists();
+      // identify this client as a logger
+      socket.emit('logger');
+      socket.on('logmessage', function(msg){
+        $('#messages').append($('<li>').text(msg));
+        refreshLists();
+      });
+      
+      function refreshLists() {
+          $.getJSON( "clients.json", function( data ) {
+              $('#clients').empty();
+              $.each(data, function(key, val) {
+                  $('#clients').append($('<li>').text(val));
+              });
+          });
+          $.getJSON( "whiteboards.json", function( data ) {
+              $('#whiteboards').empty();
+              $.each(data, function(key, val) {
+                  $('#whiteboards').append($('<li>').text(val));
+              });
+          });
+      }
+    </script>
+  </body>
+</html>

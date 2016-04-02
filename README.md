@@ -1,45 +1,48 @@
-I basically followed this tutorial here for now, just as a proof of concept. 
-http://socket.io/get-started/chat/
-
-It's also running on heroku, but no guarantees that that's working 
-https://immense-sands-16023.herokuapp.com/
-
 #Setup
 
-First setup mysql database:
+Run envconf.sh:
 
-    mysql -u[username] -p[password] < setup.sql
+    ./envconf.sh
 
-Then run envconf.sh or just use the defaults (below):
-
-    cp defaults.env .env
-
-Then install the dependencies and start the server:
+Install the dependencies and start the server:
 
     npm install
-    npm start 
-
-Go to http://localhost:3000/
-
-Each tab in the browser will be a different user.
+    npm start
 
 The server can be stopped with the command
 
     npm stop
 
 
-#Actions in Index.js
-All logic for the actions in index js such as 
+#Structure
 
-	clientSocket.on(etc...)
+##index.js
 
-will be contained in the file /app/actions.js
+index.js contains all of the initialization logic - initializing the logger, HTTP server, SocketIO servers, etc. Actual SocketIO code does not go here.
 
-In order to add to this file just create your function in the return {} and do not forget to add a comma after the function. 
+##app/client_handler.js
 
-To invoke the methods just call actions.methodName
+Contains all the code for handling SocketIO messages.
+
+##app/rtc_handler.js
+
+Contains all the code for handling SocketIO messages for the RTC signalling.
+
+##app/whiteboards.js and app/clients.js
+
+Modules for managing client and whiteboard interaction. If you want to use them in a module that doesn't already have access, something like
+
+	var clients = require('./app/clients.js');
+	
+will give you the 'clients' object so you can do things like clients.add(client_socket) 
 
 #Debugging
+
+##Logs
+
+Logs can be viewed in real time at http://localhost:3000/log.html (or on [lempo](https://lempo.d.umn.edu:4995/log.html))
+
+##iocat
 
 Using npm download: iocat
 
@@ -47,13 +50,13 @@ Using npm download: iocat
 
 Iocat can be used to send messages to our nodejs server, which makes testing our methods easier.
 
-You would start your node js server and then in another terminal type: iocat [options] URL
+You would start your nodejs server and then in another terminal type: iocat [options] URL
 If you want to test a specific clause such as the on("joinWhiteBoard"...) method you would use the -e option (-e, --emit-key <key>     Emit-key, default is "message")
 
 For example:
 
 	iocat --socketio -e joinWhiteboard 127.0.0.1:3000
 
-To send messages that can be parsed correctly you must send it in a JSON format
+To send messages that can be parsed correctly you must send it in a JSON format, like so:
 	
-	{"key" : "value"}
+	{"name" : "UMD 4995's Whiteboard"}
