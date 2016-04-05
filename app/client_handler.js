@@ -21,9 +21,9 @@ module.exports = function(io, logger) {
 
         clientSocket.on('joinWhiteboard', function(msg) {
             var data = JSON.parse(msg);
-            logger.log('client ' + clientSocket.id + ' wants to join ' + data.name);
 		
             if(clients.joinWhiteboard(clientSocket.id, data.name)) {
+                logger.log('client ' + clientSocket.id + ' joined whiteboard ' + data.name);
                 clientSocket.emit('joinWhiteboard', { 'status': 100, 'message': 'Successfully joined whiteboard' });
             } else {
                 clientSocket.emit('joinWhiteboard', { 'status': 404, 'message': 'Could not join whiteboard' });
