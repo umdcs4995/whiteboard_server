@@ -46,12 +46,12 @@ module.exports = function(io, logger) {
             // TODO: this should probably work better
             whiteboards.getClients(client.whiteboard).forEach (function(id) {
                 if(id != clientSocket.id)
-                    clients.get(id).emit('drawevent', msg);
+                    clients.get(id).socket.emit('drawevent', msg);
             });
         });
         
         clientSocket.on('logger', function() {
-            logger.log(clientSocket.id + ' identified itself as a logging client');
+            logger.dump(clientSocket.id + ' identified itself as a logging client');
             logger.add_logger(clientSocket);
         });
 
