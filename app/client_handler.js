@@ -1,10 +1,13 @@
 var whiteboards = require('./whiteboards.js'),
     clients = require('./clients.js');
 
-module.exports = function(io, logger) {
+module.exports = function(io, logger, mongodb) {
     io.on('connection', function(clientSocket) {
         
-        clients.add(clientSocket);
+        if(clients.add(clientSocket)){
+            mongodb.insertUser(clientSocket.id);
+        }
+
         clientSocket.emit('connection', clientSocket.id);
         logger.log("client connected: " + clientSocket.id)
 
@@ -13,6 +16,7 @@ module.exports = function(io, logger) {
             logger.log('new whiteboard with name: ' + data.name);
 		
             if(whiteboards.add(data.name) && clients.joinWhiteboard(clientSocket.id, data.name)) {
+                mongodb.insertWhiteboard(data);
                 clientSocket.emit('createWhiteboard', { 'status': 100, 'message': 'Successfully created whiteboard' });
             } else {
                 clientSocket.emit('createWhiteboard', { 'status': 404, 'message': 'Could not create whiteboard' });
@@ -24,6 +28,12 @@ module.exports = function(io, logger) {
 		
             if(clients.joinWhiteboard(clientSocket.id, data.name)) {
                 logger.log('client ' + clientSocket.id + ' joined whiteboard ' + data.name);
+                mongodb.insertUserInWhiteboard(data.name,clientSocket.id);
+                mongodb.dumpDrawEvents(data.name, function(results){
+                    results.drawEvents.forEach(function(doc){
+                        clientSocket.emit('drawevent',doc.event);
+                    });
+                });
                 clientSocket.emit('joinWhiteboard', { 'status': 100, 'message': 'Successfully joined whiteboard' });
             } else {
                 clientSocket.emit('joinWhiteboard', { 'status': 404, 'message': 'Could not join whiteboard' });
@@ -64,9 +74,10 @@ module.exports = function(io, logger) {
         clientSocket.on('drawevent', function(msg){
             var client = clients.get(clientSocket);
             logger.dump(msg);
+            mongodb.insertDrawEvent(client.whiteboard,msg);
 
             if(client.whiteboard === undefined){
-                logger.log('client ' + clientSocket.id + ' is sending a drawmessage when they aren\'t in a whiteboard';)
+                logger.log('client ' + clientSocket.id + ' is sending a drawmessage when they aren\'t in a whiteboard');
                 clientSocket.emit("ConnectionError", msg);
             }else{
                 // TODO: this should probably work better

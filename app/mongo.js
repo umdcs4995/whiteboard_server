@@ -1,0 +1,79 @@
+var mongojs = require("mongojs"); //mongo wrapper
+var url = 'mongodb://localhost:27017/test'; //URL: this is for test purposes
+var collections = ['users','whiteboards']; //Array of known collections
+
+var assert = require('assert');
+
+module.exports = function() {
+    mongodb = mongojs(url, collections);
+    console.log("monogo database connected.");
+
+    //Inserts a user json object into the 'users' collection.
+    //If 'users' collection doesn't exist, one will be created.
+    mongodb.insertUser = function(userObj) {
+        mongodb.collection('users').save({"name":userObj}, function (err, result) {
+            if(err || !result) console.log ("User not saved.");
+            else console.log("Inserted a document into the Users collection.");
+        });
+    };
+
+    //Inserts a whiteboard json object into the 'whiteboards' collection.
+    //If 'whiteboards' collection doesn't exist, one will be created.
+    mongodb.insertWhiteboard = function(whiteboardObj){
+        mongodb.collection('whiteboards').save(whiteboardObj, function (err, result) {
+            if(err || !result) console.log ("Whiteboard not saved.\n");
+            else console.log("Inserted a document into the Whiteboard collection.\n");
+        });
+    };
+
+    //Inserts a client json into the clients set of a whiteboard document
+    mongodb.insertUserInWhiteboard = function(whiteboardName, userObj){
+        mongodb.collection('whiteboards').update({name: whiteboardName},{$push: {clients: userObj}});
+    };
+
+    //Inserts a draw event into a whiteboard document in the draw events field
+    mongodb.insertDrawEvent = function(whiteboardName, msg){
+        //var date = new Date();  //use if you want time stamp   {event:msg, ts:date}
+        var data = {$push: { drawEvents : {event: msg}}};
+        mongodb.collection('whiteboards').update({name : whiteboardName},data);
+    }
+
+    //Provides a json object containing all the drawing events that have happened
+    mongodb.dumpDrawEvents = function(whiteboardName,callback){
+        var docs = mongodb.collection('whiteboards').find({"name": whiteboardName},function (err,docs) {
+            if(docs.drawEvents === undefined){
+                console.log("Shit ain't here");
+            }
+            else {
+                callback(docs);
+            }
+        });
+    };
+
+    //Print collection
+    mongodb.printDatabase = function(collectionInc) {
+        var cursor = mongodb.collection(collectionInc).find(function(err, docs){
+            if(err || !docs) console.log("Cannot print database or database is empty\n");
+            else console.log(collectionInc, docs);
+        });
+    };
+
+    //Find whiteboard by given parameters
+    // !! not tested yet !!
+    mongodb.findWhiteboard = function(parameter,callback){
+        mongodb.collection('whiteboards').find(parameter,function(err, docs){
+            if(err || !docs) console.log("Cannot find document\n");
+            else callback(docs);
+        });
+    };
+
+    //Finds user by given parameters
+    mongodb.findUser = function(collectionInc,parameter, callback) {
+        var cursor = mongodb.collection(collectionInc).find(parameter,function(err, docs){
+            if(err || !docs) console.log ("User not found.\n")
+            else callback(doc);
+        });
+    };
+
+    return mongodb;
+}

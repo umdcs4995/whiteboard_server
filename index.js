@@ -18,6 +18,7 @@ var app = require('express')(),
 var streams = require('./app/streams.js')(),
     whiteboards = require('./app/whiteboards.js'),
     clients = require('./app/clients.js'),
+	mongodb = require('./app/mongo.js')(),
     logger = require('./app/logger.js')(false, true);
 
 app.get('/', function(req, res){
@@ -72,4 +73,4 @@ var port = process.env.PORT || 3000
 http.listen(port, function(){
 	logger.log('whiteboard server listening on *:' + port);
 });
-require('./app/client_handler.js')(mainListeningSocket, logger);
+require('./app/client_handler.js')(mainListeningSocket, logger,mongodb);
