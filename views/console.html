@@ -22,8 +22,10 @@
       <select id="s">
           <option value="createWhiteboard">Create Whiteboard</option>
           <option value="joinWhiteboard">Join Whiteboard</option>
+          <option value="deleteWhiteboard">Delete Whiteboard</option>
           <option value="drawevent">Draw Event</option>
           <option value="chat message">Chat Message</option>
+          <option value="me">Who am I? (debug)</option>
       </select>
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
@@ -46,7 +48,9 @@
       socket.on('connection', handler);
       socket.on('createWhiteboard', handler);
       socket.on('joinWhiteboard', handler);
+      socket.on('deleteWhiteboard', handler);
       socket.on('drawevent', handler);
+      socket.on('me', handler);
     </script>
   </body>
 </html>

@@ -57,8 +57,6 @@ module.exports.removeClient = function(name, client_id) {
         var pos = whiteboardMap[name].clients.indexOf(client_id)
         if(pos >= 0) {
             whiteboardMap[name].clients.splice(pos,1);
-            if(whiteboardMap[name].clients.length == 0)
-                delete whiteboardMap[name];
             return true;
         }
     }

@@ -18,7 +18,6 @@ var app = require('express')(),
 var streams = require('./app/streams.js')(),
     whiteboards = require('./app/whiteboards.js'),
     clients = require('./app/clients.js'),
-    // change the 'false' to 'true' to get debug output
     logger = require('./app/logger.js')(false, true);
 
 app.get('/', function(req, res){
