@@ -66,7 +66,7 @@ module.exports = function(io, logger) {
             logger.log('client ' + clientSocket.id + ' is sending a draw message to whiteboard ' + client.whiteboard);
             logger.dump(msg);
 
-            if(client.Whiteboard === undefined){
+            if(client.whiteboard === undefined){
                 console.log("Client is sending to undefind");
                 clientScoket.emit("ConnectionError", msg);
             }else{
