@@ -29,6 +29,29 @@ module.exports = function(io, logger) {
                 clientSocket.emit('joinWhiteboard', { 'status': 404, 'message': 'Could not join whiteboard' });
             }
         });
+        
+        clientSocket.on('deleteWhiteboard', function(msg) {
+            var data = JSON.parse(msg);
+		
+            whiteboards.getClients(data.name).forEach (function(id) {
+                if(id != clientSocket.id)
+                    clients.get(id).socket.emit('deleteWhiteboard', { 'status': 200, 'message': 'Closing time! You don\'t have to go home but you can\'t stay here!'})
+            });
+        
+            if(whiteboards.remove(data.name)) {
+                logger.log('client ' + clientSocket.id + ' deleted whiteboard ' + data.name);
+                clientSocket.emit('deleteWhiteboard', { 'status': 100, 'message': 'Successfully deleted whiteboard' });
+            } else {
+                clientSocket.emit('deleteWhiteboard', { 'status': 404, 'message': 'Could not delete whiteboard' });
+            }
+        });
+        
+        // 'me' - responds with the client object that we have for the current connection
+        clientSocket.on('me', function(msg){
+            logger.log(clientSocket.id + ' is having an identity crisis');
+            var client = clients.get(clientSocket);
+            clientSocket.emit('me', {'whiteboard': client.whiteboard, 'socket': client.socket.id});
+        });
 
         // chat message - echoes the message to all connected clients
         clientSocket.on('chat message', function(msg){

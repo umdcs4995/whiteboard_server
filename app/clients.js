@@ -36,15 +36,17 @@ module.exports.remove = function(client) {
     if(client.hasOwnProperty('id'))
         id = client.id;
     
-    // if the client is in a whiteboard, remove them from it
-    if(clientMap[id].whiteboard) {
-        whiteboards.removeClient(clientMap[id].whiteboard, id);
-    }
-    
     if(clientMap[id]) {
+        
+        // if the client is in a whiteboard, remove them from it
+        if(clientMap[id].whiteboard) {
+            whiteboards.removeClient(clientMap[id].whiteboard, id);
+        }
+        
         delete clientMap[id];
         return true;
     }
+    
     return false;
 }
 
