@@ -63,14 +63,14 @@ module.exports = function(io, logger) {
         // draw event - echoes the message to all clients in the same whiteboard
         clientSocket.on('drawevent', function(msg){
             var client = clients.get(clientSocket);
-            logger.log('client ' + clientSocket.id + ' is sending a draw message to whiteboard ' + client.whiteboard);
             logger.dump(msg);
 
             if(client.whiteboard === undefined){
-                console.log("Client is sending to undefind");
-                clientScoket.emit("ConnectionError", msg);
+                logger.log('client ' + clientSocket.id + ' is sending a drawmessage when they aren\'t in a whiteboard';)
+                clientSocket.emit("ConnectionError", msg);
             }else{
                 // TODO: this should probably work better
+                logger.log('client ' + clientSocket.id + ' is sending a draw message to whiteboard ' + client.whiteboard);
                 whiteboards.getClients(client.whiteboard).forEach (function(id) {
                     if(id != clientSocket.id)
                         clients.get(id).socket.emit('drawevent', msg);
