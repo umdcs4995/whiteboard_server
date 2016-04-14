@@ -66,7 +66,7 @@ module.exports = function(io, logger) {
             logger.dump(msg);
 
             if(client.whiteboard === undefined){
-                logger.log('client ' + clientSocket.id + ' is sending a drawmessage when they aren\'t in a whiteboard';)
+                logger.log('client ' + clientSocket.id + ' is sending a drawmessage when they aren\'t in a whiteboard');
                 clientSocket.emit("ConnectionError", msg);
             }else{
                 // TODO: this should probably work better
