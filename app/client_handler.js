@@ -50,7 +50,7 @@ module.exports = function(io, logger) {
         clientSocket.on('me', function(msg){
             logger.log(clientSocket.id + ' is having an identity crisis');
             var client = clients.get(clientSocket);
-            clientSocket.emit('me', {'whiteboard': client.whiteboard, 'socket': client.socket.id});
+            clientSocket.emit('me', {'whiteboard': client.whiteboard, 'socket': client.socket.id, 'email': client.email});
         });
 
         // chat message - echoes the message to all connected clients
@@ -91,6 +91,22 @@ module.exports = function(io, logger) {
                 clientSocket.emit('authenticate', { 'status': 100, 'message': 'Successfully authenticated' });
             } else {
                 clientSocket.emit('authenticate', { 'status': 404, 'message': 'Could not authenticate' });
+            } 
+        });
+        
+        clientSocket.on('listClients', function() {
+            if(clients.get(clientSocket.id).whiteboard) {
+                var whiteboard = clients.get(clientSocket.id).whiteboard;
+                logger.log('client '+clientSocket.id+' requested user list for ' + whiteboard);
+                
+                var clientEmails = [];
+                whiteboards.getClients(whiteboard).forEach(function(key) {
+                    clientEmails.push(clients.get(key).email);
+                });
+                
+                clientSocket.emit('listClients', { 'status': 100, 'clients': clientEmails });
+            } else {
+                clientSocket.emit('listClients', { 'status': 404, 'message': 'You are not in a whiteboard' });
             } 
         });
 
