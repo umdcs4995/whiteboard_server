@@ -25,6 +25,7 @@
           <option value="deleteWhiteboard">Delete Whiteboard</option>
           <option value="drawevent">Draw Event</option>
           <option value="chat message">Chat Message</option>
+          <option value="authenticate">Authenticate</option>
           <option value="me">Who am I? (debug)</option>
       </select>
       <input id="m" autocomplete="off" /><button>Send</button>
@@ -50,6 +51,7 @@
       socket.on('joinWhiteboard', handler);
       socket.on('deleteWhiteboard', handler);
       socket.on('drawevent', handler);
+      socket.on('authenticate', handler);
       socket.on('me', handler);
     </script>
   </body>

@@ -82,6 +82,17 @@ module.exports = function(io, logger) {
             logger.dump(clientSocket.id + ' identified itself as a logging client');
             logger.add_logger(clientSocket);
         });
+        
+        clientSocket.on('authenticate', function(msg) {
+            var data = JSON.parse(msg);
+        
+            if(clients.authenticate(clientSocket.id, data.email)) {
+                logger.log('client '+clientSocket.id+' authenticated with email ' + data.email);
+                clientSocket.emit('authenticate', { 'status': 100, 'message': 'Successfully authenticated' });
+            } else {
+                clientSocket.emit('authenticate', { 'status': 404, 'message': 'Could not authenticate' });
+            } 
+        });
 
         // this is called when a client just quits
         clientSocket.on('disconnect', function(){

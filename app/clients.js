@@ -20,8 +20,35 @@ module.exports.add = function(client) {
     
     if(!clientMap[id]) {
         clientMap[id] = {};
+        clientMap[id].email = "";
         if(client.hasOwnProperty('id'))
             clientMap[id].socket = client;
+        else
+            clientMap[id].socket = "";
+        return true;
+    }
+    return false;
+}
+
+module.exports.authenticate = function(client, email) {
+    // you can add a client either by its socket or its id
+    var id = client;
+    // if you pass a socket object, its id is used as a key
+    if(client.hasOwnProperty('id'))
+        id = client.id;
+    
+    if(clientMap[id]) {
+        emailFound = false;
+        Object.keys(clientMap).forEach(function(key) {
+            if(key!== id && clientMap[key].email === email) {
+                emailFound = true;
+            }
+        });
+        
+        if(emailFound)
+            return false;
+        
+        clientMap[id].email = email;
         return true;
     }
     return false;
