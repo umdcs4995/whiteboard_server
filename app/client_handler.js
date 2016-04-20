@@ -17,6 +17,7 @@ module.exports = function(io, logger, mongodb) {
 		
             if(whiteboards.add(data.name) && clients.joinWhiteboard(clientSocket.id, data.name)) {
                 mongodb.insertWhiteboard(data);
+
                 clientSocket.emit('createWhiteboard', { 'status': 100, 'message': 'Successfully created whiteboard' });
             } else {
                 clientSocket.emit('createWhiteboard', { 'status': 404, 'message': 'Could not create whiteboard' });
@@ -28,11 +29,13 @@ module.exports = function(io, logger, mongodb) {
 		
             if(clients.joinWhiteboard(clientSocket.id, data.name)) {
                 logger.log('client ' + clientSocket.id + ' joined whiteboard ' + data.name);
-                mongodb.insertUserInWhiteboard(data.name,clientSocket.id);
-                mongodb.dumpDrawEvents(data.name, function(results){
-                    results.drawEvents.forEach(function(doc){
-                        clientSocket.emit('drawevent',doc.event);
-                    });
+                mongodb.dumpDrawEvents(data.name, function(err,result) {
+
+                    if(result!= "no"){
+                        result.forEach(function(doc){
+                            clientSocket.emit('drawevent', doc);
+                        });
+                    }
                 });
                 clientSocket.emit('joinWhiteboard', { 'status': 100, 'message': 'Successfully joined whiteboard' });
             } else {
@@ -74,6 +77,7 @@ module.exports = function(io, logger, mongodb) {
         clientSocket.on('drawevent', function(msg){
             var client = clients.get(clientSocket);
             logger.dump(msg);
+            console.log(msg + "\n");
             mongodb.insertDrawEvent(client.whiteboard,msg);
 
             if(client.whiteboard === undefined){
