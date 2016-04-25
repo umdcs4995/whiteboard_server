@@ -80,5 +80,19 @@ module.exports = function() {
         });
     };
 
+    mongodb.deleteWhiteboard = function(whiteboardName,callback) {
+        mongodb.collection('whiteboards').remove(whiteboardName, 1);
+        mongodb.collection('whiteboards').find(whiteboardName,function(docs){
+            if(docs == null)
+                callback(false);
+            else
+                callback(true);
+        });
+    }
+
+    mongodb.clearWhiteboardDrawEvemts = function(whiteboardName){
+        mongodb.collection('whiteboards').update({name:whiteboardName},{$unset:{drawEvents : ""}});
+    }
+
     return mongodb;
 }

@@ -30,13 +30,13 @@ module.exports = function(io, logger, mongodb) {
             if(clients.joinWhiteboard(clientSocket.id, data.name)) {
                 logger.log('client ' + clientSocket.id + ' joined whiteboard ' + data.name);
                 mongodb.dumpDrawEvents(data.name, function(err,result) {
-
-                    if(result!= "no"){
+                    if(result!="no"){
                         result.forEach(function(doc){
                             clientSocket.emit('drawevent', doc);
                         });
                     }
                 });
+
                 clientSocket.emit('joinWhiteboard', { 'status': 100, 'message': 'Successfully joined whiteboard' });
             } else {
                 clientSocket.emit('joinWhiteboard', { 'status': 404, 'message': 'Could not join whiteboard' });
@@ -53,6 +53,12 @@ module.exports = function(io, logger, mongodb) {
         
             if(whiteboards.remove(data.name)) {
                 logger.log('client ' + clientSocket.id + ' deleted whiteboard ' + data.name);
+                mongodb.deleteWhiteboard(data.name,function(results){
+                    if(results)
+                        console.log('Successful removed whiteboard' + data.name + ' from database');
+                    else
+                        console.log('Unsucessful at removing whiteboard ' + data.name + 'from database');
+                });
                 clientSocket.emit('deleteWhiteboard', { 'status': 100, 'message': 'Successfully deleted whiteboard' });
             } else {
                 clientSocket.emit('deleteWhiteboard', { 'status': 404, 'message': 'Could not delete whiteboard' });
@@ -89,6 +95,38 @@ module.exports = function(io, logger, mongodb) {
                 whiteboards.getClients(client.whiteboard).forEach (function(id) {
                     if(id != clientSocket.id)
                         clients.get(id).socket.emit('drawevent', msg);
+                });
+            }
+        });
+
+
+        clientSocket.on('drawEventDump', function(msg){
+            var client = clients.get(clientSocket);
+            if(client.whiteboard == null){
+                clientSocket.emit("ConnectionError,", msg);
+            }
+            else {
+                logger.log('client ' + clientSocket.id + ' is requesting drawing events from whiteboard ' + client.whiteboard);
+                mongodb.dumpDrawEvents(client.Whiteboard, function (err, result) {
+                    if (result != "no") {
+                        result.forEach(function (doc) {
+                            clientSocket.emit('drawevent', doc);
+                        });
+                    }
+                });
+            }
+         });
+        
+        clientSocket.on('clearWhiteboard', function(msg){
+            var data = JSON.parse(msg);
+
+            if(client.whiteBoard == null){
+                clientSocket.emit("ConnectionError", msg);
+            }
+            else{
+                mongodb.clearWhiteboardDrawEvemts(data.name);
+                whiteboards.getClients(client.whiteboard).forEach (function(id) {
+                    clients.get(id).socket.emit('clearWhiteboard', msg);
                 });
             }
         });
