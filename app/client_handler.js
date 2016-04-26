@@ -11,13 +11,19 @@ module.exports = function(io, logger, mongodb) {
         clientSocket.emit('connection', clientSocket.id);
         logger.log("client connected: " + clientSocket.id)
 
+        clientSocket.on('clientInformation', function(msg){
+           if(clients.updateClient(msg))
+                console.log("Updated user information.");
+            else
+               console("Not updated user information.");
+        });
+
         clientSocket.on('createWhiteboard', function(msg) {
             var data = JSON.parse(msg);
             logger.log('new whiteboard with name: ' + data.name);
-		
+
             if(whiteboards.add(data.name) && clients.joinWhiteboard(clientSocket.id, data.name)) {
                 mongodb.insertWhiteboard(data);
-
                 clientSocket.emit('createWhiteboard', { 'status': 100, 'message': 'Successfully created whiteboard' });
             } else {
                 clientSocket.emit('createWhiteboard', { 'status': 404, 'message': 'Could not create whiteboard' });
@@ -83,7 +89,6 @@ module.exports = function(io, logger, mongodb) {
         clientSocket.on('drawevent', function(msg){
             var client = clients.get(clientSocket);
             logger.dump(msg);
-            console.log(msg + "\n");
             mongodb.insertDrawEvent(client.whiteboard,msg);
 
             if(client.whiteboard === undefined){
@@ -98,7 +103,6 @@ module.exports = function(io, logger, mongodb) {
                 });
             }
         });
-
 
         clientSocket.on('drawEventDump', function(msg){
             var client = clients.get(clientSocket);
@@ -115,7 +119,7 @@ module.exports = function(io, logger, mongodb) {
                     }
                 });
             }
-         });
+        });
         
         clientSocket.on('clearWhiteboard', function(msg){
             var data = JSON.parse(msg);
@@ -163,6 +167,22 @@ module.exports = function(io, logger, mongodb) {
             } 
         });
 
+        clientSocket.on('listClientsJSON', function() {
+            if(clients.get(clientSocket.id).whiteboard) {
+                var whiteboard = clients.get(clientSocket.id).whiteboard;
+                logger.log('client '+clientSocket.id+' requested user list for ' + whiteboard);
+
+                var clientsJSON = [];
+                whiteboards.getClients(whiteboard).forEach(function(key) {
+                    clientsJSON.push(clientsJSON.get(key));
+                });
+
+                clientSocket.emit('listClients', { 'status': 100, 'clients': clientsJSON });
+            } else {
+                clientSocket.emit('listClients', { 'status': 404, 'message': 'You are not in a whiteboard' });
+            }
+        });
+
         // this is called when a client just quits
         clientSocket.on('disconnect', function(){
             logger.log(clientSocket.id + ' disconnected');
@@ -176,5 +196,6 @@ module.exports = function(io, logger, mongodb) {
             logger.log(clientSocket.id + ' is leaving');
             clients.remove(clientSocket);
         });
+
     });
 };

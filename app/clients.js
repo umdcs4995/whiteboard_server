@@ -21,10 +21,28 @@ module.exports.add = function(client) {
     if(!clientMap[id]) {
         clientMap[id] = {};
         clientMap[id].email = "";
+        clientMap[id].name = "";
+        clientMap[id].picture = "";
         if(client.hasOwnProperty('id'))
             clientMap[id].socket = client;
         else
             clientMap[id].socket = "";
+        return true;
+    }
+    return false;
+}
+
+module.exports.updateClient = function(client) {
+    // you can add a client either by its socket or its id
+    var id = client;
+    // if you pass a socket object, its id is used as a key
+    if(client.hasOwnProperty('id'))
+        id = client.id;
+
+    if(clientMap[id]) {
+        clientMap[id].email = email;
+        clientMap[id].name = name;
+        clientMap[id].picture = clientPicture;
         return true;
     }
     return false;

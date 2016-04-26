@@ -23,20 +23,22 @@ module.exports = function() {
         var data = whiteboardObj
         mongodb.collection('whiteboards').save(whiteboardObj, function (err, result) {
             if (err || !result) console.log("Whiteboard not saved.\n");
-            else {
-                console.log("Inserted a document into the Whiteboard collection.\n");
-            }
+            else console.log("Inserted a document into the Whiteboard collection.\n");
         });
     }
 
     //Inserts a client json into the clients set of a whiteboard document
     mongodb.insertUserInWhiteboard = function(whiteboardName, userObj){
-        mongodb.collection('whiteboards').update({name: whiteboardName},{$push: {clients: userObj}});
+        console.log(userObj);
+        var data = {$push: {client: userObj}};
+        mongodb.collection('whiteboards').update({name: whiteboardName},data,function(err, result){
+             if(err || !result) console.log("User not added to Whiteboard Document");
+             else console.log("User added to Whiteboard Document");
+         });
     };
 
     //Inserts a draw event into a whiteboard document in the draw events field
     mongodb.insertDrawEvent = function(whiteboardName, msg){
-        //var date = new Date();  //use if you want time stamp   {event:msg, ts:date}
         var data = {$push: { drawEvents : msg}};
         mongodb.collection('whiteboards').update({name : whiteboardName},data);
     }
@@ -73,7 +75,7 @@ module.exports = function() {
     };
 
     //Finds user by given parameters
-    mongodb.findUser = function(collectionInc,parameter, callback) {
+    mongodb.findUser = function(collectionInc,name, callback) {
         var cursor = mongodb.collection(collectionInc).find(parameter,function(err, docs){
             if(err || !docs) console.log ("User not found.\n")
             else callback(doc);
