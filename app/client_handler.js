@@ -42,7 +42,6 @@ module.exports = function(io, logger, mongodb) {
                         });
                     }
                 });
-
                 clientSocket.emit('joinWhiteboard', { 'status': 100, 'message': 'Successfully joined whiteboard' });
             } else {
                 clientSocket.emit('joinWhiteboard', { 'status': 404, 'message': 'Could not join whiteboard' });
@@ -94,7 +93,7 @@ module.exports = function(io, logger, mongodb) {
             if(client.whiteboard === undefined){
                 logger.log('client ' + clientSocket.id + ' is sending a drawmessage when they aren\'t in a whiteboard');
                 clientSocket.emit("ConnectionError", msg);
-            }else{
+            } else{
                 // TODO: this should probably work better
                 logger.log('client ' + clientSocket.id + ' is sending a draw message to whiteboard ' + client.whiteboard);
                 whiteboards.getClients(client.whiteboard).forEach (function(id) {
@@ -106,7 +105,7 @@ module.exports = function(io, logger, mongodb) {
 
         clientSocket.on('drawEventDump', function(msg){
             var client = clients.get(clientSocket);
-            if(client.whiteboard == null){
+            if(client.whiteboard == null) {
                 clientSocket.emit("ConnectionError,", msg);
             }
             else {
@@ -174,12 +173,12 @@ module.exports = function(io, logger, mongodb) {
 
                 var clientsJSON = [];
                 whiteboards.getClients(whiteboard).forEach(function(key) {
-                    clientsJSON.push(clientsJSON.get(key));
+                    clientsJSON.push(clients.get(key));
                 });
 
-                clientSocket.emit('listClients', { 'status': 100, 'clients': clientsJSON });
+                clientSocket.emit('listClientsJSON', { 'status': 100, 'clients': clientsJSON });
             } else {
-                clientSocket.emit('listClients', { 'status': 404, 'message': 'You are not in a whiteboard' });
+                clientSocket.emit('listClientsJSON', { 'status': 404, 'message': 'You are not in a whiteboard' });
             }
         });
 
