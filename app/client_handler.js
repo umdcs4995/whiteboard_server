@@ -12,10 +12,12 @@ module.exports = function(io, logger, mongodb) {
         logger.log("client connected: " + clientSocket.id)
 
         clientSocket.on('clientInformation', function(msg){
-           if(clients.updateClient(msg))
-                console.log("Updated user information.");
-            else
-               console("Not updated user information.");
+            var data = JSON.parse(msg);
+            if(clients.updateClient(clientSocket.id, data)) {
+                logger.log("Updated user information.");
+            } else {
+                logger.log("Not updated user information.");
+            }
         });
 
         clientSocket.on('createWhiteboard', function(msg) {
@@ -72,9 +74,9 @@ module.exports = function(io, logger, mongodb) {
         
         // 'me' - responds with the client object that we have for the current connection
         clientSocket.on('me', function(msg){
-            logger.log(clientSocket.id + ' is having an identity crisis');
-            var client = clients.get(clientSocket);
-            clientSocket.emit('me', {'whiteboard': client.whiteboard, 'socket': client.socket.id, 'email': client.email});
+            logger.log(clientSocket.id + ' requested info on themselves');
+            var client = clients.getInfo(clientSocket);
+            clientSocket.emit('me', client);
         });
 
         // chat message - echoes the message to all connected clients
@@ -153,33 +155,19 @@ module.exports = function(io, logger, mongodb) {
         clientSocket.on('listClients', function() {
             if(clients.get(clientSocket.id).whiteboard) {
                 var whiteboard = clients.get(clientSocket.id).whiteboard;
-                logger.log('client '+clientSocket.id+' requested user list for ' + whiteboard);
+                logger.log('client '+clientSocket.id+' requested user info for ' + whiteboard);
                 
-                var clientEmails = [];
+                var clientInfo = [];
                 whiteboards.getClients(whiteboard).forEach(function(key) {
-                    clientEmails.push(clients.get(key).email);
+                    info = {};
+                    info = clients.getInfo(key);
+                    clientInfo.push(info);
                 });
                 
-                clientSocket.emit('listClients', { 'status': 100, 'clients': clientEmails });
+                clientSocket.emit('listClients', { 'status': 100, 'clients': clientInfo });
             } else {
                 clientSocket.emit('listClients', { 'status': 404, 'message': 'You are not in a whiteboard' });
             } 
-        });
-
-        clientSocket.on('listClientsJSON', function() {
-            if(clients.get(clientSocket.id).whiteboard) {
-                var whiteboard = clients.get(clientSocket.id).whiteboard;
-                logger.log('client '+clientSocket.id+' requested user list for ' + whiteboard);
-
-                var clientsJSON = [];
-                whiteboards.getClients(whiteboard).forEach(function(key) {
-                    clientsJSON.push(clients.get(key));
-                });
-
-                clientSocket.emit('listClientsJSON', { 'status': 100, 'clients': clientsJSON });
-            } else {
-                clientSocket.emit('listClientsJSON', { 'status': 404, 'message': 'You are not in a whiteboard' });
-            }
         });
 
         // this is called when a client just quits

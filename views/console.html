@@ -27,6 +27,7 @@
           <option value="chat message">Chat Message</option>
           <option value="authenticate">Authenticate</option>
           <option value="listClients">List Clients</option>
+          <option value="clientInformation">Client Information</option>
           <option value="me">Who am I? (debug)</option>
       </select>
       <input id="m" autocomplete="off" /><button>Send</button>
@@ -54,6 +55,7 @@
       socket.on('drawevent', handler);
       socket.on('authenticate', handler);
       socket.on('listClients', handler);
+      socket.on('clientInformation', handler);
       socket.on('me', handler);
     </script>
   </body>

@@ -32,7 +32,7 @@ module.exports.add = function(client) {
     return false;
 }
 
-module.exports.updateClient = function(client) {
+module.exports.updateClient = function(client, data) {
     // you can add a client either by its socket or its id
     var id = client;
     // if you pass a socket object, its id is used as a key
@@ -102,6 +102,27 @@ module.exports.get = function(client) {
     if(client.hasOwnProperty('id'))
         return clientMap[client.id];
     return clientMap[client];
+}
+
+module.exports.getInfo = function(client) {
+    id = client;
+    if(client.hasOwnProperty('id'))
+        id = clientMap[client.id];
+    
+    if(!clientMap[id])
+        return {};
+    
+    info = {};
+    if(clientMap[id].hasOwnProperty('email'))
+        info.email = clientMap[id].email;
+    if(clientMap[id].hasOwnProperty('email'))
+        info.name = clientMap[id].name;
+    if(clientMap[id].hasOwnProperty('email'))
+        info.picture = clientMap[id].picture;
+    if(clientMap[id].hasOwnProperty('email'))
+        info.whiteboard = clientMap[id].whiteboard;
+    
+    return info;
 }
 
 module.exports.list = function() {
