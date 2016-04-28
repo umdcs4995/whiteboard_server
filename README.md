@@ -34,7 +34,13 @@ Modules for managing client and whiteboard interaction. If you want to use them 
 
 	var clients = require('./app/clients.js');
 	
-will give you the 'clients' object so you can do things like clients.add(client_socket) 
+will give you the 'clients' object so you can do things like clients.add(client_socket)
+
+ ##app/mongo.js
+
+ Modules for server and database interaction. This module uses the mongojs package for ease.
+
+ To have the mongo database work, you just need to have mongo db install and if need be, install mongojs manually 'npm install mongojs'.
 
 #Debugging
 
