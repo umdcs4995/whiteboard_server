@@ -40,12 +40,12 @@ module.exports.updateClient = function(client, data) {
         id = client.id;
 
     if(clientMap[id]) {
-        if(client.email != null)
-            clientMap[id].email = client.email;
-        if(client.name != null)
-            clientMap[id].name = client.name;
-        if(client.picture != null)
-        clientMap[id].picture = client.picture;
+        if(data.email != null)
+            clientMap[id].email = data.email;
+        if(data.name != null)
+            clientMap[id].name = data.name;
+        if(data.picture != null)
+            clientMap[id].picture = data.picture;
         return true;
     }
     return false;
