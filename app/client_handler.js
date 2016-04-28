@@ -139,7 +139,7 @@ module.exports = function(io, logger, mongodb) {
         clientSocket.on('authenticate', function(msg) {
             var data = JSON.parse(msg);
         
-            if(clients.authenticate(clientSocket.id, data.email)) {
+            if(clients.authenticate(clientSocket.id, data.email, data.username)) {
                 logger.log('client '+clientSocket.id+' authenticated with email ' + data.email);
                 clientSocket.emit('authenticate', { 'status': 100, 'message': 'Successfully authenticated' });
             } else {

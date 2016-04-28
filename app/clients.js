@@ -30,7 +30,7 @@ module.exports.add = function(client) {
     return false;
 }
 
-module.exports.authenticate = function(client, email) {
+module.exports.authenticate = function(client, email, username) {
     // you can add a client either by its socket or its id
     var id = client;
     // if you pass a socket object, its id is used as a key
@@ -49,6 +49,7 @@ module.exports.authenticate = function(client, email) {
             return false;
         
         clientMap[id].email = email;
+        clientMap[id].username = username;
         return true;
     }
     return false;
