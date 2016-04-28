@@ -13,6 +13,7 @@ The server can be stopped with the command
 
     npm stop
 
+Install Mongodb if you wish to use the mongo services with nodejs
 
 #Structure
 
