@@ -3,7 +3,8 @@ var whiteboards = require('./whiteboards.js'),
 
 module.exports = function(io, logger, mongodb) {
     io.on('connection', function(clientSocket) {
-        
+
+        // on connection add user to the database for future user account expansion
         if(clients.add(clientSocket)){
             mongodb.insertUser(clientSocket.id);
         }
@@ -11,6 +12,12 @@ module.exports = function(io, logger, mongodb) {
         clientSocket.emit('connection', clientSocket.id);
         logger.log("client connected: " + clientSocket.id)
 
+        /**
+         * clientInformation handler - Will update the client information
+         * in clients with fields in msg
+         *
+         * msg - JSON object containing fields "name", "picture", "email"
+         */
         clientSocket.on('clientInformation', function(msg){
            if(clients.updateClient(msg))
                 console.log("Updated user information.");
@@ -18,6 +25,12 @@ module.exports = function(io, logger, mongodb) {
                console("Not updated user information.");
         });
 
+        /**
+         * createWhiteboard handler - Creates a Whiteboard (saving it in temporary whiteboards
+         * array and database). Creator joins that Whiteboard on creation.
+         *
+         * msg - JSON object that contains Whiteboard fields
+         */
         clientSocket.on('createWhiteboard', function(msg) {
             var data = JSON.parse(msg);
             logger.log('new whiteboard with name: ' + data.name);
@@ -30,6 +43,11 @@ module.exports = function(io, logger, mongodb) {
             }
         });
 
+        /**
+         * joinWhiteboard handler - Joins a user to a Whiteboard.
+         *
+         * msg - JSON object containing Whiteboard fields
+         */
         clientSocket.on('joinWhiteboard', function(msg) {
             var data = JSON.parse(msg);
 		
@@ -47,7 +65,12 @@ module.exports = function(io, logger, mongodb) {
                 clientSocket.emit('joinWhiteboard', { 'status': 404, 'message': 'Could not join whiteboard' });
             }
         });
-        
+
+        /**
+         * deleteWhiteboard handler - Deletes Whiteboard and all kicks all users out.
+         *
+         * msg - JSON object containing Whiteboard fields
+         */
         clientSocket.on('deleteWhiteboard', function(msg) {
             var data = JSON.parse(msg);
 		
@@ -83,8 +106,11 @@ module.exports = function(io, logger, mongodb) {
             logger.dump(msg);
             io.emit(msg);
         });
-    
-        // draw event - echoes the message to all clients in the same whiteboard
+
+        /**
+         * drawEvent handler - emits the draw event messsage to Whiteboard clients, logs the message and inserts the drawevents
+         * into the database.
+         */
         clientSocket.on('drawevent', function(msg){
             var client = clients.get(clientSocket);
             logger.dump(msg);
@@ -103,6 +129,12 @@ module.exports = function(io, logger, mongodb) {
             }
         });
 
+        /**
+         * drawEventDump handler - takes all drawEvents from a whiteboard stored in the database and emits them back to
+         * the client.
+         *
+         * msg - Whiteboard JSON object.
+         */
         clientSocket.on('drawEventDump', function(msg){
             var client = clients.get(clientSocket);
             if(client.whiteboard == null) {
@@ -164,22 +196,6 @@ module.exports = function(io, logger, mongodb) {
             } else {
                 clientSocket.emit('listClients', { 'status': 404, 'message': 'You are not in a whiteboard' });
             } 
-        });
-
-        clientSocket.on('listClientsJSON', function() {
-            if(clients.get(clientSocket.id).whiteboard) {
-                var whiteboard = clients.get(clientSocket.id).whiteboard;
-                logger.log('client '+clientSocket.id+' requested user list for ' + whiteboard);
-
-                var clientsJSON = [];
-                whiteboards.getClients(whiteboard).forEach(function(key) {
-                    clientsJSON.push(clients.get(key));
-                });
-
-                clientSocket.emit('listClientsJSON', { 'status': 100, 'clients': clientsJSON });
-            } else {
-                clientSocket.emit('listClientsJSON', { 'status': 404, 'message': 'You are not in a whiteboard' });
-            }
         });
 
         // this is called when a client just quits
